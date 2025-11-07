@@ -153,6 +153,69 @@
             display: none;
         }
 
+        /* Door Indicators */
+        .door {
+            position: absolute;
+            width: 80px;
+            height: 20px;
+            background: rgba(139, 0, 0, 0.5);
+            border: 2px solid var(--accent-gold);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--accent-gold);
+            font-size: 12px;
+            cursor: pointer;
+            pointer-events: auto;
+            z-index: 5;
+            transition: all 0.3s;
+        }
+
+        .door:hover {
+            background: rgba(139, 0, 0, 0.8);
+            box-shadow: 0 0 10px var(--accent-gold);
+        }
+
+        .door.top {
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .door.bottom {
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .door.left {
+            left: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 80px;
+        }
+
+        .door.right {
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 80px;
+        }
+
+        .door.locked {
+            background: rgba(50, 50, 50, 0.7);
+            border-color: var(--text-dim);
+            color: var(--text-dim);
+            cursor: not-allowed;
+        }
+
+        .door.locked:hover {
+            background: rgba(50, 50, 50, 0.7);
+            box-shadow: none;
+        }
+
         /* Sidebar */
         .sidebar {
             flex: 1;
@@ -428,6 +491,20 @@
             color: var(--text-dim);
         }
 
+        /* Room Transition */
+        .room-transition {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+            opacity: 0;
+            z-index: 50;
+            pointer-events: none;
+            transition: opacity 0.5s;
+        }
+
         /* Responsive */
         @media (max-width: 1200px) {
             .game-container {
@@ -460,6 +537,15 @@
     <div class="game-container">
         <div class="game-area">
             <canvas id="game-canvas" width="900" height="700"></canvas>
+            
+            <!-- Door Elements -->
+            <div class="door top" id="door-top" data-direction="top">↑</div>
+            <div class="door bottom" id="door-bottom" data-direction="bottom">↓</div>
+            <div class="door left" id="door-left" data-direction="left">←</div>
+            <div class="door right" id="door-right" data-direction="right">→</div>
+            
+            <!-- Room Transition Overlay -->
+            <div class="room-transition" id="room-transition"></div>
             
             <div class="ui-overlay">
                 <div class="health-bar">
@@ -585,6 +671,7 @@
         let projectiles = [];
         let particles = [];
         let combatTexts = [];
+        let roomCleared = false;
         
         // Input handling
         const keys = {};
@@ -610,6 +697,118 @@
                 this.updateCombatTexts();
                 this.checkCollisions();
                 this.updateUI();
+                this.updateDoors();
+                
+                // Update player attack cooldown
+                if (player.attackCooldown > 0) {
+                    player.attackCooldown--;
+                }
+            },
+            
+            // Update door states
+            updateDoors: function() {
+                // Check if room is cleared
+                if (enemies.length === 0 && !roomCleared) {
+                    roomCleared = true;
+                    this.unlockDoors();
+                }
+                
+                // Update door visibility
+                const doors = ['top', 'bottom', 'left', 'right'];
+                doors.forEach(direction => {
+                    const door = document.getElementById(`door-${direction}`);
+                    if (this.hasDoor(direction)) {
+                        door.style.display = 'flex';
+                        if (roomCleared) {
+                            door.classList.remove('locked');
+                        } else {
+                            door.classList.add('locked');
+                        }
+                    } else {
+                        door.style.display = 'none';
+                    }
+                });
+            },
+            
+            // Check if current room has a door in specified direction
+            hasDoor: function(direction) {
+                // Simple logic - all rooms have all doors except edge cases
+                if (direction === 'top' && currentRoom > 3) return true;
+                if (direction === 'bottom' && currentRoom < 7) return true;
+                if (direction === 'left' && currentRoom % 3 !== 1) return true;
+                if (direction === 'right' && currentRoom % 3 !== 0) return true;
+                return false;
+            },
+            
+            // Unlock all doors when room is cleared
+            unlockDoors: function() {
+                const doors = ['top', 'bottom', 'left', 'right'];
+                doors.forEach(direction => {
+                    const door = document.getElementById(`door-${direction}`);
+                    if (door.style.display !== 'none') {
+                        door.classList.remove('locked');
+                    }
+                });
+            },
+            
+            // Move to another room
+            changeRoom: function(direction) {
+                if (!roomCleared) return;
+                
+                // Fade to black
+                const transition = document.getElementById('room-transition');
+                transition.style.opacity = '1';
+                
+                setTimeout(() => {
+                    // Calculate new room based on direction
+                    let newRoom = currentRoom;
+                    
+                    switch(direction) {
+                        case 'top': newRoom -= 3; break;
+                        case 'bottom': newRoom += 3; break;
+                        case 'left': newRoom -= 1; break;
+                        case 'right': newRoom += 1; break;
+                    }
+                    
+                    // Validate room number
+                    if (newRoom >= 1 && newRoom <= 9) {
+                        currentRoom = newRoom;
+                        this.generateRoom();
+                        
+                        // Position player based on door entered
+                        this.positionPlayerFromDoor(direction);
+                    }
+                    
+                    // Fade back in
+                    setTimeout(() => {
+                        transition.style.opacity = '0';
+                    }, 300);
+                }, 500);
+            },
+            
+            // Position player based on which door they entered from
+            positionPlayerFromDoor: function(direction) {
+                const centerX = canvas.width / 2;
+                const centerY = canvas.height / 2;
+                
+                switch(direction) {
+                    case 'top':
+                        player.x = centerX;
+                        player.y = canvas.height - 100;
+                        break;
+                    case 'bottom':
+                        player.x = centerX;
+                        player.y = 100;
+                        break;
+                    case 'left':
+                        player.x = canvas.width - 100;
+                        player.y = centerY;
+                        break;
+                    case 'right':
+                        player.x = 100;
+                        player.y = centerY;
+                        break;
+                }
             },
             
             // Render game
@@ -684,11 +883,16 @@
                         skill.cooldown--;
                     }
                 });
+                
+                // Handle continuous attack when mouse is held down
+                if (mouse.down && player.attackCooldown <= 0) {
+                    this.playerAttack();
+                }
             },
             
             // Enemy update logic
             updateEnemies: function() {
-                enemies.forEach(enemy => {
+                enemies.forEach((enemy, index) => {
                     if (enemy.health <= 0) {
                         // Enemy died
                         this.createParticles(enemy.x, enemy.y, 10, '#8b0000');
@@ -729,10 +933,7 @@
                         }
                         
                         // Remove enemy
-                        const index = enemies.indexOf(enemy);
-                        if (index > -1) {
-                            enemies.splice(index, 1);
-                        }
+                        enemies.splice(index, 1);
                         
                         // Spawn loot
                         if (Math.random() < 0.3) {
@@ -770,7 +971,8 @@
             
             // Projectile update logic
             updateProjectiles: function() {
-                projectiles.forEach((projectile, index) => {
+                for (let i = projectiles.length - 1; i >= 0; i--) {
+                    const projectile = projectiles[i];
                     projectile.x += projectile.vx;
                     projectile.y += projectile.vy;
                     projectile.lifetime--;
@@ -779,42 +981,45 @@
                     if (projectile.lifetime <= 0 || 
                         projectile.x < 0 || projectile.x > canvas.width || 
                         projectile.y < 0 || projectile.y > canvas.height) {
-                        projectiles.splice(index, 1);
+                        projectiles.splice(i, 1);
                     }
-                });
+                }
             },
             
             // Particle update logic
             updateParticles: function() {
-                particles.forEach((particle, index) => {
+                for (let i = particles.length - 1; i >= 0; i--) {
+                    const particle = particles[i];
                     particle.x += particle.vx;
                     particle.y += particle.vy;
                     particle.life--;
                     particle.alpha = particle.life / particle.maxLife;
                     
                     if (particle.life <= 0) {
-                        particles.splice(index, 1);
+                        particles.splice(i, 1);
                     }
-                });
+                }
             },
             
             // Combat text update
             updateCombatTexts: function() {
-                combatTexts.forEach((text, index) => {
+                for (let i = combatTexts.length - 1; i >= 0; i--) {
+                    const text = combatTexts[i];
                     text.y -= 1;
                     text.life--;
                     text.alpha = text.life / text.maxLife;
                     
                     if (text.life <= 0) {
-                        combatTexts.splice(index, 1);
+                        combatTexts.splice(i, 1);
                     }
-                });
+                }
             },
             
             // Collision detection
             checkCollisions: function() {
                 // Player vs Enemy projectiles
-                projectiles.forEach((projectile, pIndex) => {
+                for (let i = projectiles.length - 1; i >= 0; i--) {
+                    const projectile = projectiles[i];
                     if (projectile.isEnemy) {
                         const dx = player.x - projectile.x;
                         const dy = player.y - projectile.y;
@@ -828,19 +1033,21 @@
                             this.addCombatText('-' + damage, player.x, player.y, '#ff0000');
                             this.createParticles(player.x, player.y, 5, '#ff0000');
                             
-                            projectiles.splice(pIndex, 1);
+                            projectiles.splice(i, 1);
                             
                             if (player.health <= 0) {
                                 this.gameOver();
                             }
                         }
                     }
-                });
+                }
                 
                 // Player projectiles vs Enemies
-                projectiles.forEach((projectile, pIndex) => {
+                for (let i = projectiles.length - 1; i >= 0; i--) {
+                    const projectile = projectiles[i];
                     if (!projectile.isEnemy) {
-                        enemies.forEach(enemy => {
+                        for (let j = enemies.length - 1; j >= 0; j--) {
+                            const enemy = enemies[j];
                             const dx = enemy.x - projectile.x;
                             const dy = enemy.y - projectile.y;
                             const distance = Math.sqrt(dx * dx + dy * dy);
@@ -860,14 +1067,16 @@
                                 this.addCombatText('-' + damage, enemy.x, enemy.y, '#ff0000');
                                 this.createParticles(enemy.x, enemy.y, 3, '#ff0000');
                                 
-                                projectiles.splice(pIndex, 1);
+                                projectiles.splice(i, 1);
+                                break;
                             }
-                        });
+                        }
                     }
-                });
+                }
                 
                 // Player vs Items
-                items.forEach((item, index) => {
+                for (let i = items.length - 1; i >= 0; i--) {
+                    const item = items[i];
                     const dx = player.x - item.x;
                     const dy = player.y - item.y;
                     const distance = Math.sqrt(dx * dx + dy * dy);
@@ -875,9 +1084,9 @@
                     if (distance < player.size + item.size) {
                         // Collect item
                         this.collectItem(item);
-                        items.splice(index, 1);
+                        items.splice(i, 1);
                     }
-                });
+                }
             },
             
             // UI update
@@ -905,6 +1114,18 @@
                 } else {
                     document.getElementById('enemy-health').style.display = 'none';
                 }
+                
+                // Update skill cooldowns in UI
+                player.skills.forEach((skill, index) => {
+                    const skillElement = document.querySelectorAll('.skill')[index];
+                    if (skill.cooldown > 0) {
+                        skillElement.style.opacity = '0.5';
+                        skillElement.querySelector('.skill-cooldown').textContent = Math.ceil(skill.cooldown / 60) + 's';
+                    } else {
+                        skillElement.style.opacity = '1';
+                        skillElement.querySelector('.skill-cooldown').textContent = skill.manaCost + ' MP';
+                    }
+                });
             },
             
             // =============================================
@@ -1077,6 +1298,7 @@
                 projectiles = [];
                 particles = [];
                 combatTexts = [];
+                roomCleared = false;
                 
                 // Generate first room
                 this.generateRoom();
@@ -1090,6 +1312,7 @@
                 // Clear previous room
                 enemies = [];
                 items = [];
+                roomCleared = false;
                 
                 // Add enemies based on floor and room
                 let enemyCount = 2 + Math.floor(currentFloor / 2) + (currentRoom > 1 ? 1 : 0);
@@ -1098,8 +1321,8 @@
                     this.spawnEnemy();
                 }
                 
-                // Add a boss on room 5 of each floor
-                if (currentRoom === 5) {
+                // Add a boss on room 9 of each floor
+                if (currentRoom === 9) {
                     this.spawnBoss();
                 }
                 
@@ -1224,6 +1447,7 @@
                         
                         projectiles.push(projectile);
                     }
+                    player.attackCooldown = player.attackSpeed;
                     return;
                 } else if (player.class === 'mage') {
                     // Mage - magic projectile that costs mana
@@ -1361,22 +1585,6 @@
                 }
                 
                 this.createParticles(item.x, item.y, 5, item.color);
-            },
-            
-            // Move to next room
-            nextRoom: function() {
-                currentRoom++;
-                
-                if (currentRoom > 5) {
-                    currentFloor++;
-                    currentRoom = 1;
-                }
-                
-                this.generateRoom();
-                
-                // Reset player position
-                player.x = canvas.width / 2;
-                player.y = canvas.height / 2;
             },
             
             // Game over
@@ -1517,7 +1725,6 @@
             
             canvas.addEventListener('mousedown', function() {
                 mouse.down = true;
-                
                 if (gameState === 'playing') {
                     game.playerAttack();
                 }
@@ -1525,6 +1732,16 @@
             
             canvas.addEventListener('mouseup', function() {
                 mouse.down = false;
+            });
+            
+            // Door click events
+            document.querySelectorAll('.door').forEach(door => {
+                door.addEventListener('click', function() {
+                    if (!this.classList.contains('locked')) {
+                        const direction = this.dataset.direction;
+                        game.changeRoom(direction);
+                    }
+                });
             });
             
             // UI button events
