@@ -1,0 +1,786 @@
+/* shadowcrypt.css - Estilos Avançados para ShadowCrypt */
+
+/* ===== ANIMAÇÕES GLOBAIS ===== */
+@keyframes pulse-glow {
+    0% { box-shadow: 0 0 5px currentColor; }
+    50% { box-shadow: 0 0 20px currentColor, 0 0 30px currentColor; }
+    100% { box-shadow: 0 0 5px currentColor; }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-5px); }
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+@keyframes ripple {
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(3); opacity: 0; }
+}
+
+@keyframes flame {
+    0%, 100% { transform: scale(1) rotate(0deg); }
+    25% { transform: scale(1.1) rotate(-2deg); }
+    75% { transform: scale(1.1) rotate(2deg); }
+}
+
+/* ===== ESTILOS GLOBAIS APRIMORADOS ===== */
+body {
+    background: 
+        radial-gradient(ellipse at 20% 20%, rgba(139, 0, 0, 0.1) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(30, 144, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a0f 70%, #050508 100%),
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" opacity="0.03"><rect width="100" height="100" fill="none" stroke="%238b0000" stroke-width="2"/><path d="M50,0 L50,100 M0,50 L100,50" stroke="%238b0000" stroke-width="1"/></svg>');
+    animation: background-pulse 20s ease-in-out infinite;
+}
+
+@keyframes background-pulse {
+    0%, 100% { background-color: #0a0a0f; }
+    50% { background-color: #0f0f1a; }
+}
+
+/* ===== CONTAINER DO JOGO ===== */
+.game-container {
+    position: relative;
+    border: 3px solid;
+    border-image: linear-gradient(45deg, #8b0000, #daa520, #8b0000) 1;
+    animation: border-glow 3s ease-in-out infinite;
+    background: 
+        linear-gradient(160deg, var(--darker-bg) 0%, var(--dark-bg) 100%),
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" opacity="0.05"><path d="M30,0 L30,60 M0,30 L60,30" stroke="%238b0000" stroke-width="1"/></svg>');
+    box-shadow: 
+        0 0 30px rgba(139, 0, 0, 0.3),
+        inset 0 0 50px rgba(0, 0, 0, 0.7),
+        0 0 0 1px rgba(218, 165, 32, 0.1);
+}
+
+@keyframes border-glow {
+    0%, 100% { border-image-source: linear-gradient(45deg, #8b0000, #daa520, #8b0000); }
+    50% { border-image-source: linear-gradient(45deg, #daa520, #8b0000, #daa520); }
+}
+
+/* ===== BARAS DE STATUS ANIMADAS ===== */
+.health-bar, .mana-bar {
+    position: relative;
+    overflow: visible;
+}
+
+.health-bar::before, .mana-bar::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border-radius: inherit;
+    background: linear-gradient(45deg, 
+        rgba(255,255,255,0.1) 0%,
+        transparent 20%,
+        transparent 80%,
+        rgba(255,255,255,0.1) 100%);
+    z-index: -1;
+    animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.health-fill, .mana-fill {
+    position: relative;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.health-fill::before, .mana-fill::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, 
+        transparent 0%,
+        rgba(255,255,255,0.3) 50%,
+        transparent 100%);
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+    border-radius: inherit;
+}
+
+/* Efeito de pulsação quando a vida está baixa */
+.health-bar.low-health .health-fill {
+    animation: pulse-glow 0.5s ease-in-out infinite;
+}
+
+/* ===== ANIMAÇÕES DO PLAYER ===== */
+.player {
+    animation: float 3s ease-in-out infinite;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+}
+
+.player::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 150%;
+    height: 150%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    animation: ripple 3s linear infinite;
+}
+
+/* Diferentes efeitos baseados no equipamento */
+.player.with-sword::after {
+    content: '⚔️';
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 16px;
+    animation: float 2s ease-in-out infinite;
+    filter: drop-shadow(0 0 5px #daa520);
+}
+
+.player.with-bow::after {
+    content: '🏹';
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 16px;
+    animation: float 2s ease-in-out infinite 0.5s;
+    filter: drop-shadow(0 0 5px #c0c0c0);
+}
+
+.player.with-staff::after {
+    content: '🔮';
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 16px;
+    animation: float 2s ease-in-out infinite 1s;
+    filter: drop-shadow(0 0 5px #9370db);
+}
+
+/* ===== INIMIGOS ANIMADOS ===== */
+.enemy {
+    position: relative;
+    animation: enemy-float 4s ease-in-out infinite;
+}
+
+@keyframes enemy-float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    25% { transform: translateY(-3px) rotate(1deg); }
+    75% { transform: translateY(3px) rotate(-1deg); }
+}
+
+/* Esqueletos */
+.enemy.skeleton {
+    animation: skeleton-rattle 0.5s ease-in-out infinite;
+    filter: drop-shadow(0 0 5px #c0c0c0);
+}
+
+@keyframes skeleton-rattle {
+    0%, 100% { transform: translateX(0px); }
+    25% { transform: translateX(-1px); }
+    75% { transform: translateX(1px); }
+}
+
+/* Zumbis */
+.enemy.zombie {
+    animation: zombie-drag 3s ease-in-out infinite;
+    filter: drop-shadow(0 0 5px #2d5a27);
+}
+
+@keyframes zombie-drag {
+    0%, 100% { transform: translateX(0px) rotate(0deg); }
+    25% { transform: translateX(-2px) rotate(-1deg); }
+    75% { transform: translateX(2px) rotate(1deg); }
+}
+
+/* Fantasmas */
+.enemy.ghost {
+    animation: ghost-float 6s ease-in-out infinite;
+    filter: drop-shadow(0 0 10px #7b68ee);
+    opacity: 0.9;
+}
+
+@keyframes ghost-float {
+    0%, 100% { 
+        transform: translateY(0px) scale(1);
+        opacity: 0.9;
+    }
+    50% { 
+        transform: translateY(-10px) scale(1.05);
+        opacity: 0.7;
+    }
+}
+
+/* Demônios */
+.enemy.demon {
+    animation: flame 2s ease-in-out infinite;
+    filter: drop-shadow(0 0 15px #ff4500);
+}
+
+/* Dragões */
+.enemy.dragon {
+    animation: dragon-breath 4s ease-in-out infinite;
+    filter: drop-shadow(0 0 20px #dc143c);
+}
+
+@keyframes dragon-breath {
+    0%, 100% { 
+        transform: scale(1) rotate(0deg);
+        filter: drop-shadow(0 0 20px #dc143c);
+    }
+    50% { 
+        transform: scale(1.05) rotate(1deg);
+        filter: drop-shadow(0 0 30px #ff0000);
+    }
+}
+
+/* ===== EFEITOS DE PARTÍCULAS ===== */
+.particle {
+    position: absolute;
+    pointer-events: none;
+    animation: particle-fade 1s ease-out forwards;
+}
+
+@keyframes particle-fade {
+    0% { 
+        opacity: 1;
+        transform: scale(1) translate(0, 0);
+    }
+    100% { 
+        opacity: 0;
+        transform: scale(0) translate(var(--tx, 0), var(--ty, 0));
+    }
+}
+
+/* Partículas de sangue */
+.particle.blood {
+    background: radial-gradient(circle, #8b0000 0%, transparent 70%);
+    animation: blood-splash 0.6s ease-out forwards;
+}
+
+@keyframes blood-splash {
+    0% { 
+        opacity: 1;
+        transform: scale(0) rotate(0deg);
+    }
+    50% { 
+        opacity: 1;
+        transform: scale(1) rotate(180deg);
+    }
+    100% { 
+        opacity: 0;
+        transform: scale(1.2) rotate(360deg);
+    }
+}
+
+/* Partículas mágicas */
+.particle.magic {
+    background: radial-gradient(circle, #9370db 0%, transparent 70%);
+    animation: magic-sparkle 1.2s ease-out forwards;
+}
+
+@keyframes magic-sparkle {
+    0% { 
+        opacity: 1;
+        transform: scale(0) rotate(0deg);
+        filter: blur(0px);
+    }
+    50% { 
+        opacity: 1;
+        transform: scale(1) rotate(180deg);
+        filter: blur(2px);
+    }
+    100% { 
+        opacity: 0;
+        transform: scale(1.5) rotate(360deg);
+        filter: blur(5px);
+    }
+}
+
+/* ===== ANIMAÇÕES DE ITENS ===== */
+.item {
+    animation: item-float 4s ease-in-out infinite;
+    filter: drop-shadow(0 0 5px currentColor);
+}
+
+@keyframes item-float {
+    0%, 100% { 
+        transform: translateY(0px) rotate(0deg);
+    }
+    25% { 
+        transform: translateY(-5px) rotate(5deg);
+    }
+    75% { 
+        transform: translateY(5px) rotate(-5deg);
+    }
+}
+
+/* Poções */
+.item.potion {
+    animation: potion-bubble 3s ease-in-out infinite;
+}
+
+@keyframes potion-bubble {
+    0%, 100% { 
+        transform: translateY(0px) scale(1);
+        filter: drop-shadow(0 0 5px #ff0000);
+    }
+    50% { 
+        transform: translateY(-8px) scale(1.1);
+        filter: drop-shadow(0 0 15px #ff0000);
+    }
+}
+
+/* Armas lendárias */
+.item.legendary {
+    animation: legendary-glow 2s ease-in-out infinite;
+    filter: drop-shadow(0 0 10px var(--legendary));
+}
+
+@keyframes legendary-glow {
+    0%, 100% { 
+        transform: scale(1) rotate(0deg);
+        filter: drop-shadow(0 0 10px var(--legendary));
+    }
+    25% { 
+        transform: scale(1.1) rotate(5deg);
+        filter: drop-shadow(0 0 20px var(--legendary));
+    }
+    75% { 
+        transform: scale(1.1) rotate(-5deg);
+        filter: drop-shadow(0 0 20px var(--legendary));
+    }
+}
+
+/* ===== ANIMAÇÕES DE PROJÉTEIS ===== */
+.projectile {
+    animation: projectile-trail 0.1s linear infinite;
+}
+
+@keyframes projectile-trail {
+    0% { 
+        opacity: 1;
+        filter: blur(0px);
+    }
+    100% { 
+        opacity: 0.8;
+        filter: blur(2px);
+    }
+}
+
+.projectile.magic {
+    animation: magic-missile 0.5s linear infinite;
+}
+
+@keyframes magic-missile {
+    0% { 
+        transform: scale(1);
+        filter: drop-shadow(0 0 5px #9370db);
+    }
+    50% { 
+        transform: scale(1.2);
+        filter: drop-shadow(0 0 15px #9370db);
+    }
+    100% { 
+        transform: scale(1);
+        filter: drop-shadow(0 0 5px #9370db);
+    }
+}
+
+/* ===== ANIMAÇÕES DE TEXTO DE COMBATE ===== */
+.combat-text {
+    animation: text-float 1.5s ease-out forwards;
+    text-shadow: 
+        2px 2px 4px #000,
+        0 0 10px currentColor;
+}
+
+@keyframes text-float {
+    0% { 
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    50% { 
+        opacity: 1;
+        transform: translateY(-25px) scale(1.2);
+    }
+    100% { 
+        opacity: 0;
+        transform: translateY(-50px) scale(0.8);
+    }
+}
+
+.combat-text.critical {
+    animation: critical-pop 1s ease-out forwards;
+}
+
+@keyframes critical-pop {
+    0% { 
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+    25% { 
+        opacity: 1;
+        transform: scale(2) translateY(-10px);
+    }
+    100% { 
+        opacity: 0;
+        transform: scale(1.5) translateY(-40px);
+    }
+}
+
+/* ===== ANIMAÇÕES DA UI ===== */
+.btn {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255,255,255,0.2), 
+        transparent);
+    transition: left 0.5s;
+}
+
+.btn:hover::before {
+    left: 100%;
+}
+
+.btn:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 
+        0 10px 20px rgba(0,0,0,0.3),
+        0 0 20px rgba(218, 165, 32, 0.4);
+}
+
+.btn:active {
+    transform: translateY(-1px) scale(1.02);
+}
+
+/* Botões com efeito especial */
+.btn-primary {
+    background: linear-gradient(135deg, #8b0000 0%, #600000 50%, #8b0000 100%);
+    background-size: 200% 200%;
+    animation: button-glow 3s ease-in-out infinite;
+}
+
+@keyframes button-glow {
+    0%, 100% { 
+        background-position: 0% 50%;
+        box-shadow: 0 0 20px rgba(139, 0, 0, 0.5);
+    }
+    50% { 
+        background-position: 100% 50%;
+        box-shadow: 0 0 30px rgba(139, 0, 0, 0.8);
+    }
+}
+
+/* ===== ANIMAÇÕES DO INVENTÁRIO ===== */
+.inventory-slot {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.inventory-slot::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 2px solid transparent;
+    border-radius: inherit;
+    background: linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.1) 50%, transparent 60%);
+    background-size: 300% 300%;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.inventory-slot:hover::before {
+    opacity: 1;
+    animation: slot-shine 2s linear infinite;
+}
+
+@keyframes slot-shine {
+    0% { background-position: -100% -100%; }
+    100% { background-position: 200% 200%; }
+}
+
+.inventory-slot.equipped {
+    animation: equipped-pulse 2s ease-in-out infinite;
+}
+
+@keyframes equipped-pulse {
+    0%, 100% { 
+        transform: scale(1);
+        box-shadow: 0 0 10px rgba(218, 165, 32, 0.3);
+    }
+    50% { 
+        transform: scale(1.05);
+        box-shadow: 0 0 20px rgba(218, 165, 32, 0.6);
+    }
+}
+
+/* ===== ANIMAÇÕES DE HABILIDADES ===== */
+.skill {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.skill::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(218, 165, 32, 0.2), 
+        transparent);
+    transition: left 0.5s;
+}
+
+.skill:hover::before {
+    left: 100%;
+}
+
+.skill.ready {
+    animation: skill-ready 2s ease-in-out infinite;
+}
+
+@keyframes skill-ready {
+    0%, 100% { 
+        box-shadow: 0 0 5px rgba(218, 165, 32, 0.3);
+    }
+    50% { 
+        box-shadow: 0 0 15px rgba(218, 165, 32, 0.6);
+    }
+}
+
+.skill.on-cooldown {
+    position: relative;
+}
+
+.skill.on-cooldown::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to top, rgba(139,0,0,0.5) var(--cooldown-progress, 0%), transparent var(--cooldown-progress, 0%));
+    pointer-events: none;
+}
+
+/* ===== ANIMAÇÕES DO MINI MAPA ===== */
+.mini-map-room {
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.mini-map-room::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.mini-map-room.current::before {
+    opacity: 1;
+    animation: room-pulse 2s ease-in-out infinite;
+}
+
+@keyframes room-pulse {
+    0%, 100% { 
+        box-shadow: 0 0 0 0 rgba(218, 165, 32, 0.4);
+    }
+    50% { 
+        box-shadow: 0 0 0 3px rgba(218, 165, 32, 0.8);
+    }
+}
+
+.mini-map-room.visited::before {
+    animation: visited-glow 4s ease-in-out infinite;
+}
+
+@keyframes visited-glow {
+    0%, 100% { 
+        background: rgba(100, 100, 150, 0.3);
+    }
+    50% { 
+        background: rgba(100, 100, 150, 0.6);
+    }
+}
+
+/* ===== ANIMAÇÕES DE TRANSIÇÃO ===== */
+.room-transition {
+    animation: fade-in-out 1s ease-in-out;
+}
+
+@keyframes fade-in-out {
+    0% { opacity: 0; }
+    50% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+/* ===== ANIMAÇÕES DO MERCADOR ===== */
+.merchant {
+    animation: merchant-enter 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes merchant-enter {
+    0% { 
+        opacity: 0;
+        transform: translate(-50%, -20px) scale(0.9);
+    }
+    100% { 
+        opacity: 1;
+        transform: translate(-50%, 0) scale(1);
+    }
+}
+
+.merchant-item {
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.merchant-item::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border-radius: inherit;
+    background: linear-gradient(45deg, #daa520, #ffd700, #daa520);
+    background-size: 200% 200%;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: -1;
+}
+
+.merchant-item:hover::before {
+    opacity: 1;
+    animation: merchant-glow 2s linear infinite;
+}
+
+@keyframes merchant-glow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* ===== EFEITOS DE DANO ===== */
+.damage-flash {
+    animation: damage-flash 0.3s ease-out;
+}
+
+@keyframes damage-flash {
+    0% { 
+        background-color: rgba(255, 0, 0, 0.3);
+    }
+    100% { 
+        background-color: transparent;
+    }
+}
+
+.heal-flash {
+    animation: heal-flash 0.3s ease-out;
+}
+
+@keyframes heal-flash {
+    0% { 
+        background-color: rgba(0, 255, 0, 0.3);
+    }
+    100% { 
+        background-color: transparent;
+    }
+}
+
+/* ===== ANIMAÇÕES DE LEVEL UP ===== */
+.level-up {
+    animation: level-up-celebration 2s ease-out;
+}
+
+@keyframes level-up-celebration {
+    0% { 
+        transform: scale(1);
+        filter: brightness(1);
+    }
+    25% { 
+        transform: scale(1.2);
+        filter: brightness(1.5);
+    }
+    50% { 
+        transform: scale(1.1);
+        filter: brightness(1.3);
+    }
+    100% { 
+        transform: scale(1);
+        filter: brightness(1);
+    }
+}
+
+/* ===== RESPONSIVIDADE E PERFORMANCE ===== */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Otimizações para dispositivos móveis */
+@media (max-width: 768px) {
+    .game-container {
+        transform: scale(0.9);
+        transform-origin: center center;
+    }
+    
+    .btn:hover {
+        transform: none;
+    }
+}
+
+/* ===== ESTILOS DE DEBUG ===== */
+.debug-info {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    background: rgba(0,0,0,0.8);
+    color: #00ff00;
+    padding: 10px;
+    border-radius: 5px;
+    font-family: monospace;
+    font-size: 12px;
+    z-index: 1000;
+    animation: debug-pulse 2s ease-in-out infinite;
+}
+
+@keyframes debug-pulse {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
+}
