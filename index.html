@@ -2,7 +2,1034 @@
 <html lang="pt-BR">
 <head>
 <style>
+    /* shadowcrypt.css - Pixel Art Dark Fantasy Styling */
 
+/* =============================================
+   RESET & BASE STYLES
+   ============================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+}
+
+:root {
+    /* Dark Fantasy Color Palette */
+    --dark-bg: #0a0a0f;
+    --darker-bg: #050508;
+    --accent-red: #8b0000;
+    --accent-gold: #daa520;
+    --accent-silver: #c0c0c0;
+    --text-light: #e8e8e8;
+    --text-dim: #a0a0a0;
+    --border-dark: #1a1a2e;
+    --border-light: #2d2d4d;
+    --magic-blue: #1e90ff;
+    --magic-purple: #9370db;
+    --poison-green: #32cd32;
+    
+    /* Rarity Colors */
+    --common: #969696;
+    --uncommon: #2ecc71;
+    --rare: #3498db;
+    --epic: #9b59b6;
+    --legendary: #f1c40f;
+    
+    /* Pixel Art Sizes */
+    --pixel-size: 2px;
+    --border-pixel: 2px solid;
+}
+
+body {
+    font-family: 'Cinzel', 'Times New Roman', serif;
+    background: 
+        radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a0f 70%, #050508 100%),
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" opacity="0.03"><rect width="100" height="100" fill="none" stroke="%238b0000" stroke-width="2"/><path d="M50,0 L50,100 M0,50 L100,50" stroke="%238b0000" stroke-width="1"/></svg>');
+    color: var(--text-light);
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* =============================================
+   GAME CONTAINER & LAYOUT
+   ============================================= */
+
+.game-container {
+    position: relative;
+    width: 1200px;
+    height: 700px;
+    display: flex;
+    background: 
+        linear-gradient(160deg, var(--darker-bg) 0%, var(--dark-bg) 100%),
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" opacity="0.05"><path d="M30,0 L30,60 M0,30 L60,30" stroke="%238b0000" stroke-width="1"/></svg>');
+    border: var(--border-pixel) var(--accent-red);
+    box-shadow: 
+        0 0 30px rgba(139, 0, 0, 0.3),
+        inset 0 0 50px rgba(0, 0, 0, 0.7);
+    overflow: hidden;
+    border-radius: 0;
+}
+
+/* Pixel Art Borders */
+.game-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: var(--pixel-size) solid var(--accent-red);
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Main Game Area */
+.game-area {
+    flex: 3;
+    position: relative;
+    overflow: hidden;
+    background: #0a0a0f;
+}
+
+#game-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+}
+
+/* =============================================
+   UI OVERLAY - PIXEL ART STYLE
+   ============================================= */
+
+.ui-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 10;
+}
+
+/* Health & Mana Bars - Pixel Style */
+.health-bar {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: 200px;
+    height: 16px;
+    background: #000;
+    border: var(--border-pixel) #400;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(139, 0, 0, 0.5);
+}
+
+.health-fill {
+    height: 100%;
+    background: 
+        repeating-linear-gradient(
+            90deg,
+            #8b0000 0px,
+            #8b0000 4px,
+            #a00 4px,
+            #a00 8px
+        );
+    width: 100%;
+    transition: width 0.3s ease;
+    position: relative;
+}
+
+.health-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    animation: pixelShimmer 2s infinite;
+}
+
+.mana-bar {
+    position: absolute;
+    top: 45px;
+    left: 20px;
+    width: 200px;
+    height: 12px;
+    background: #000;
+    border: var(--border-pixel) #006;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(30, 144, 255, 0.5);
+}
+
+.mana-fill {
+    height: 100%;
+    background: 
+        repeating-linear-gradient(
+            90deg,
+            #1e90ff 0px,
+            #1e90ff 3px,
+            #00bfff 3px,
+            #00bfff 6px
+        );
+    width: 100%;
+    transition: width 0.3s ease;
+    position: relative;
+}
+
+.mana-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    animation: pixelShimmer 1.5s infinite;
+}
+
+@keyframes pixelShimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+/* Player Stats */
+.player-stats {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    text-align: right;
+    background: rgba(0, 0, 0, 0.9);
+    padding: 8px 12px;
+    border: var(--border-pixel) var(--border-light);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    font-size: 12px;
+}
+
+.player-stats div {
+    margin: 2px 0;
+}
+
+.stat-value {
+    color: var(--accent-gold);
+    font-weight: bold;
+    text-shadow: 0 0 5px rgba(218, 165, 32, 0.5);
+}
+
+/* Floor Indicator */
+.floor-indicator {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background: rgba(0, 0, 0, 0.9);
+    padding: 8px 12px;
+    border: var(--border-pixel) var(--border-light);
+    font-size: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+/* Enemy Health */
+.enemy-health {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.9);
+    padding: 6px 16px;
+    border: var(--border-pixel) var(--accent-red);
+    display: none;
+    box-shadow: 0 4px 12px rgba(139, 0, 0, 0.5);
+    text-align: center;
+}
+
+.enemy-health .health-bar {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: 120px;
+    margin: 4px auto 0;
+}
+
+/* =============================================
+   MINI MAP - PIXEL STYLE
+   ============================================= */
+
+.mini-map {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 150px;
+    height: 150px;
+    background: rgba(0, 0, 0, 0.9);
+    border: var(--border-pixel) var(--accent-gold);
+    padding: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.mini-map .section-title {
+    font-size: 12px;
+    margin-bottom: 6px;
+    text-align: center;
+}
+
+.mini-map-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    gap: 1px;
+    width: 100%;
+    height: 100%;
+}
+
+.mini-map-room {
+    background: rgba(42, 42, 62, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 8px;
+    transition: all 0.3s;
+}
+
+.mini-map-room.current {
+    background: #8b0000;
+    border-color: var(--accent-gold);
+    box-shadow: 0 0 8px var(--accent-gold);
+}
+
+.mini-map-room.visited {
+    background: rgba(100, 100, 150, 0.5);
+}
+
+.mini-map-room.stairs {
+    background: rgba(218, 165, 32, 0.3);
+    border-color: var(--accent-gold);
+}
+
+.mini-map-room.merchant {
+    background: rgba(32, 178, 170, 0.3);
+    border-color: var(--accent-gold);
+}
+
+.mini-map-room.boss {
+    background: rgba(178, 34, 34, 0.3);
+    border-color: var(--accent-red);
+}
+
+/* =============================================
+   DOORS - PIXEL ART
+   ============================================= */
+
+.door {
+    position: absolute;
+    width: 80px;
+    height: 20px;
+    background: 
+        repeating-linear-gradient(
+            45deg,
+            #8b0000 0px,
+            #8b0000 2px,
+            #600 2px,
+            #600 4px
+        );
+    border: var(--border-pixel) var(--accent-gold);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--accent-gold);
+    font-size: 12px;
+    cursor: pointer;
+    pointer-events: auto;
+    z-index: 5;
+    transition: all 0.3s;
+    box-shadow: 0 0 8px rgba(218, 165, 32, 0.3);
+    font-weight: bold;
+}
+
+.door:hover {
+    background: 
+        repeating-linear-gradient(
+            45deg,
+            #a00 0px,
+            #a00 2px,
+            #800 2px,
+            #800 4px
+        );
+    box-shadow: 0 0 15px var(--accent-gold);
+    transform: scale(1.05);
+}
+
+.door.top {
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.door.bottom {
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.door.left {
+    left: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 80px;
+}
+
+.door.right {
+    right: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 80px;
+}
+
+.door.locked {
+    background: 
+        repeating-linear-gradient(
+            45deg,
+            #333 0px,
+            #333 2px,
+            #222 2px,
+            #222 4px
+        );
+    border-color: #666;
+    color: #666;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.door.locked:hover {
+    background: 
+        repeating-linear-gradient(
+            45deg,
+            #333 0px,
+            #333 2px,
+            #222 2px,
+            #222 4px
+        );
+    box-shadow: none;
+    transform: none;
+}
+
+/* =============================================
+   SIDEBAR - PIXEL ART STYLE
+   ============================================= */
+
+.sidebar {
+    flex: 1;
+    background: rgba(10, 10, 20, 0.95);
+    border-left: var(--border-pixel) var(--border-dark);
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+    overflow-y: auto;
+    backdrop-filter: blur(5px);
+}
+
+.inventory, .skills, .quest-log, .equipment {
+    margin-bottom: 15px;
+    background: rgba(0, 0, 0, 0.7);
+    border: var(--border-pixel) var(--border-dark);
+    padding: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.section-title {
+    color: var(--accent-gold);
+    border-bottom: var(--border-pixel) var(--border-light);
+    padding-bottom: 6px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    text-shadow: 0 0 5px rgba(218, 165, 32, 0.5);
+    text-align: center;
+}
+
+/* Inventory Slots */
+.inventory-slots {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+}
+
+.inventory-slot {
+    width: 45px;
+    height: 45px;
+    background: 
+        repeating-linear-gradient(
+            45deg,
+            #1e1e2e 0px,
+            #1e1e2e 2px,
+            #2a2a3a 2px,
+            #2a2a3a 4px
+        );
+    border: var(--border-pixel) var(--border-light);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+}
+
+.inventory-slot:hover {
+    border-color: var(--accent-gold);
+    background: 
+        repeating-linear-gradient(
+            45deg,
+            #2a2a3a 0px,
+            #2a2a3a 2px,
+            #36364a 2px,
+            #36364a 4px
+        );
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.inventory-slot.equipped {
+    border-color: var(--accent-gold);
+    background: rgba(218, 165, 32, 0.1);
+    box-shadow: 0 0 10px rgba(218, 165, 32, 0.3);
+}
+
+/* Rarity Borders */
+.item-rarity-common { border-left: 3px solid var(--common); }
+.item-rarity-uncommon { border-left: 3px solid var(--uncommon); }
+.item-rarity-rare { border-left: 3px solid var(--rare); }
+.item-rarity-epic { border-left: 3px solid var(--epic); }
+.item-rarity-legendary { 
+    border-left: 3px solid var(--legendary);
+    animation: pixelGlow 2s infinite alternate;
+}
+
+@keyframes pixelGlow {
+    from { 
+        box-shadow: 
+            inset 0 0 5px var(--legendary),
+            0 0 5px var(--legendary); 
+    }
+    to { 
+        box-shadow: 
+            inset 0 0 10px var(--legendary),
+            0 0 10px var(--legendary),
+            0 0 20px var(--legendary); 
+    }
+}
+
+/* Equipment Slots */
+.equipment-slots {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+}
+
+.equipment-slot {
+    background: 
+        repeating-linear-gradient(
+            45deg,
+            #28283c 0px,
+            #28283c 2px,
+            #32324a 2px,
+            #32324a 4px
+        );
+    border: var(--border-pixel) var(--border-light);
+    padding: 8px;
+    text-align: center;
+    min-height: 55px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.equipment-slot-type {
+    font-size: 9px;
+    color: var(--text-dim);
+    margin-bottom: 4px;
+}
+
+/* Skills */
+.skill-slots {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.skill {
+    padding: 8px 10px;
+    background: 
+        repeating-linear-gradient(
+            45deg,
+            #1e1e2e 0px,
+            #1e1e2e 2px,
+            #2a2a3a 2px,
+            #2a2a3a 4px
+        );
+    border: var(--border-pixel) var(--border-light);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+}
+
+.skill:hover {
+    border-color: var(--accent-gold);
+    background: 
+        repeating-linear-gradient(
+            45deg,
+            #2a2a3a 0px,
+            #2a2a3a 2px,
+            #36364a 2px,
+            #36364a 4px
+        );
+    transform: translateX(3px);
+}
+
+.skill-cooldown {
+    color: var(--text-dim);
+    font-size: 10px;
+}
+
+/* Quest Log */
+.quest-item {
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+}
+
+.quest-item.completed {
+    color: var(--accent-gold);
+    text-decoration: line-through;
+}
+
+.quest-item::before {
+    content: '•';
+    color: var(--accent-gold);
+    margin-right: 6px;
+}
+
+/* =============================================
+   SCREENS (START, GAME OVER) - PIXEL ART
+   ============================================= */
+
+.screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: 
+        radial-gradient(circle at center, rgba(10, 10, 15, 0.95) 0%, rgba(5, 5, 8, 0.98) 100%),
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" opacity="0.05"><path d="M0,0 L100,100 M100,0 L0,100" stroke="%238b0000" stroke-width="1"/></svg>');
+    z-index: 100;
+    backdrop-filter: blur(5px);
+}
+
+.title {
+    font-size: 48px;
+    color: var(--accent-gold);
+    text-shadow: 
+        0 0 10px rgba(218, 165, 32, 0.5),
+        0 0 20px rgba(218, 165, 32, 0.3),
+        0 0 30px rgba(218, 165, 32, 0.2);
+    margin-bottom: 12px;
+    letter-spacing: 3px;
+    animation: pixelTitleGlow 3s ease-in-out infinite alternate;
+    text-align: center;
+}
+
+@keyframes pixelTitleGlow {
+    from { 
+        text-shadow: 
+            0 0 10px rgba(218, 165, 32, 0.5), 
+            0 0 20px rgba(218, 165, 32, 0.3); 
+    }
+    to { 
+        text-shadow: 
+            0 0 15px rgba(218, 165, 32, 0.7), 
+            0 0 25px rgba(218, 165, 32, 0.5), 
+            0 0 35px rgba(218, 165, 32, 0.3); 
+    }
+}
+
+.subtitle {
+    font-size: 18px;
+    color: var(--text-dim);
+    margin-bottom: 30px;
+    text-align: center;
+    max-width: 600px;
+    line-height: 1.4;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Buttons - Pixel Style */
+.btn {
+    background: 
+        repeating-linear-gradient(
+            45deg,
+            #2a2a3a 0px,
+            #2a2a3a 2px,
+            #1a1a2a 2px,
+            #1a1a2a 4px
+        );
+    color: var(--text-light);
+    border: var(--border-pixel) var(--border-light);
+    padding: 12px 28px;
+    margin: 8px;
+    font-family: 'Cinzel', serif;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.btn:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(218, 165, 32, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.btn:hover {
+    border-color: var(--accent-gold);
+    color: var(--accent-gold);
+    box-shadow: 0 0 20px rgba(218, 165, 32, 0.4);
+    transform: translateY(-2px);
+}
+
+.btn:hover:before {
+    left: 100%;
+}
+
+.btn-primary {
+    background: 
+        repeating-linear-gradient(
+            45deg,
+            #8b0000 0px,
+            #8b0000 2px,
+            #600000 2px,
+            #600000 4px
+        );
+    border-color: var(--accent-red);
+}
+
+.btn-primary:hover {
+    border-color: #ff0000;
+    color: #fff;
+    box-shadow: 0 0 20px rgba(139, 0, 0, 0.6);
+}
+
+/* =============================================
+   COMBAT TEXT & EFFECTS
+   ============================================= */
+
+.combat-text {
+    position: absolute;
+    color: #fff;
+    font-weight: bold;
+    text-shadow: 2px 2px 0 #000;
+    pointer-events: none;
+    z-index: 20;
+    animation: pixelFloatUp 1s forwards;
+    font-size: 16px;
+    font-family: 'Courier New', monospace;
+}
+
+@keyframes pixelFloatUp {
+    0% { transform: translateY(0) scale(1); opacity: 1; }
+    50% { transform: translateY(-25px) scale(1.1); opacity: 0.8; }
+    100% { transform: translateY(-50px) scale(1); opacity: 0; }
+}
+
+/* =============================================
+   TOOLTIP - PIXEL STYLE
+   ============================================= */
+
+.tooltip {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.95);
+    border: var(--border-pixel) var(--accent-gold);
+    padding: 10px;
+    max-width: 220px;
+    z-index: 1000;
+    pointer-events: none;
+    display: none;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
+    font-size: 11px;
+}
+
+.tooltip-name {
+    color: var(--accent-gold);
+    font-weight: bold;
+    margin-bottom: 4px;
+    font-size: 12px;
+}
+
+.tooltip-rarity-common { color: var(--common); }
+.tooltip-rarity-uncommon { color: var(--uncommon); }
+.tooltip-rarity-rare { color: var(--rare); }
+.tooltip-rarity-epic { color: var(--epic); }
+.tooltip-rarity-legendary { 
+    color: var(--legendary);
+    animation: pixelPulse 1.5s infinite;
+}
+
+@keyframes pixelPulse {
+    0% { opacity: 0.7; text-shadow: 0 0 5px var(--legendary); }
+    50% { opacity: 1; text-shadow: 0 0 10px var(--legendary); }
+    100% { opacity: 0.7; text-shadow: 0 0 5px var(--legendary); }
+}
+
+.tooltip-desc {
+    font-size: 10px;
+    color: var(--text-light);
+    margin-bottom: 4px;
+    line-height: 1.3;
+}
+
+.tooltip-stats {
+    font-size: 9px;
+    color: var(--text-dim);
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 4px;
+    margin-top: 4px;
+}
+
+/* =============================================
+   ROOM TRANSITION
+   ============================================= */
+
+.room-transition {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    opacity: 0;
+    z-index: 50;
+    pointer-events: none;
+    transition: opacity 0.5s;
+}
+
+/* =============================================
+   MERCHANT - PIXEL STYLE
+   ============================================= */
+
+.merchant {
+    position: absolute;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.95);
+    border: var(--border-pixel) var(--accent-gold);
+    padding: 16px;
+    display: none;
+    z-index: 25;
+    box-shadow: 0 0 30px rgba(218, 165, 32, 0.5);
+    backdrop-filter: blur(2px);
+    min-width: 380px;
+}
+
+.merchant-items {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.merchant-item {
+    background: 
+        repeating-linear-gradient(
+            45deg,
+            #28283c 0px,
+            #28283c 2px,
+            #32324a 2px,
+            #32324a 4px
+        );
+    border: var(--border-pixel) var(--border-light);
+    padding: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 10px;
+}
+
+.merchant-item:hover {
+    border-color: var(--accent-gold);
+    transform: scale(1.03);
+}
+
+/* =============================================
+   SCROLLBAR - PIXEL STYLE
+   ============================================= */
+
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+::-webkit-scrollbar-thumb {
+    background: 
+        repeating-linear-gradient(
+            45deg,
+            #8b0000 0px,
+            #8b0000 2px,
+            #600 2px,
+            #600 4px
+        );
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: 
+        repeating-linear-gradient(
+            45deg,
+            #a00 0px,
+            #a00 2px,
+            #800 2px,
+            #800 4px
+        );
+}
+
+/* =============================================
+   RESPONSIVE DESIGN
+   ============================================= */
+
+@media (max-width: 1200px) {
+    .game-container {
+        width: 100%;
+        height: 100%;
+        border: none;
+        border-radius: 0;
+    }
+    
+    .game-container::before {
+        display: none;
+    }
+    
+    .title {
+        font-size: 36px;
+    }
+    
+    .subtitle {
+        font-size: 16px;
+        padding: 0 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        display: none;
+    }
+    
+    .game-area {
+        flex: 1;
+    }
+    
+    .health-bar,
+    .mana-bar {
+        width: 150px;
+    }
+    
+    .player-stats {
+        font-size: 10px;
+        padding: 6px 8px;
+    }
+    
+    .mini-map {
+        width: 120px;
+        height: 120px;
+    }
+}
+
+/* =============================================
+   PIXEL ART UTILITY CLASSES
+   ============================================= */
+
+.pixel-border {
+    border: var(--border-pixel);
+}
+
+.pixel-border-red {
+    border: var(--border-pixel) var(--accent-red);
+}
+
+.pixel-border-gold {
+    border: var(--border-pixel) var(--accent-gold);
+}
+
+.pixel-bg-dark {
+    background: 
+        repeating-linear-gradient(
+            45deg,
+            #1a1a2e 0px,
+            #1a1a2e 2px,
+            #2a2a3a 2px,
+            #2a2a3a 4px
+        );
+}
+
+.pixel-bg-darker {
+    background: 
+        repeating-linear-gradient(
+            45deg,
+            #0a0a0f 0px,
+            #0a0a0f 2px,
+            #1a1a2a 2px,
+            #1a1a2a 4px
+        );
+}
+
+/* Pixel Art Text */
+.pixel-text {
+    font-family: 'Courier New', monospace;
+    image-rendering: pixelated;
+    text-shadow: 1px 1px 0 #000;
+}
+
+.pixel-text-small {
+    font-size: 10px;
+    line-height: 1.2;
+}
+
+.pixel-text-large {
+    font-size: 16px;
+    line-height: 1.3;
+}
 <style>
     <link rel="stylesheet" href="./shadowcrypt.css">
     <meta charset="UTF-8">
