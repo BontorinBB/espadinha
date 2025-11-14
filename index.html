@@ -1,1065 +1,329 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <link rel="stylesheet" href="./shadowcrypt.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ShadowCrypt - Dark Fantasy Dungeon Crawler</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>ShadowCrypt - Pixel Art Dark Fantasy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
-/* shadowcrypt.css - Pixel Art Dark Fantasy Styling */
-
-/* =============================================
-   RESET & BASE STYLES
-   ============================================= */
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    image-rendering: pixelated;
-    image-rendering: -moz-crisp-edges;
-    image-rendering: crisp-edges;
-}
-
-:root {
-    /* Dark Fantasy Color Palette */
-    --dark-bg: #0a0a0f;
-    --darker-bg: #050508;
-    --accent-red: #8b0000;
-    --accent-gold: #daa520;
-    --accent-silver: #c0c0c0;
-    --text-light: #e8e8e8;
-    --text-dim: #a0a0a0;
-    --border-dark: #1a1a2e;
-    --border-light: #2d2d4d;
-    --magic-blue: #1e90ff;
-    --magic-purple: #9370db;
-    --poison-green: #32cd32;
-    
-    /* Rarity Colors */
-    --common: #969696;
-    --uncommon: #2ecc71;
-    --rare: #3498db;
-    --epic: #9b59b6;
-    --legendary: #f1c40f;
-    
-    /* Pixel Art Sizes */
-    --pixel-size: 2px;
-    --border-pixel: 2px solid;
-}
-
-body {
-    font-family: 'Cinzel', 'Times New Roman', serif;
-    background: 
-        radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a0f 70%, #050508 100%),
-        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" opacity="0.03"><rect width="100" height="100" fill="none" stroke="%238b0000" stroke-width="2"/><path d="M50,0 L50,100 M0,50 L100,50" stroke="%238b0000" stroke-width="1"/></svg>');
-    color: var(--text-light);
-    overflow: hidden;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-/* =============================================
-   GAME CONTAINER & LAYOUT
-   ============================================= */
-
-.game-container {
-    position: relative;
-    width: 1200px;
-    height: 700px;
-    display: flex;
-    background: 
-        linear-gradient(160deg, var(--darker-bg) 0%, var(--dark-bg) 100%),
-        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" opacity="0.05"><path d="M30,0 L30,60 M0,30 L60,30" stroke="%238b0000" stroke-width="1"/></svg>');
-    border: var(--border-pixel) var(--accent-red);
-    box-shadow: 
-        0 0 30px rgba(139, 0, 0, 0.3),
-        inset 0 0 50px rgba(0, 0, 0, 0.7);
-    overflow: hidden;
-    border-radius: 0;
-}
-
-/* Pixel Art Borders */
-.game-container::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    border: var(--pixel-size) solid var(--accent-red);
-    pointer-events: none;
-    z-index: 1;
-}
-
-/* Main Game Area */
-.game-area {
-    flex: 3;
-    position: relative;
-    overflow: hidden;
-    background: #0a0a0f;
-}
-
-#game-canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    image-rendering: pixelated;
-    image-rendering: -moz-crisp-edges;
-    image-rendering: crisp-edges;
-}
-
-/* =============================================
-   UI OVERLAY - PIXEL ART STYLE
-   ============================================= */
-
-.ui-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 10;
-}
-
-/* Health & Mana Bars - Pixel Style */
-.health-bar {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    width: 200px;
-    height: 16px;
-    background: #000;
-    border: var(--border-pixel) #400;
-    overflow: hidden;
-    box-shadow: 0 0 10px rgba(139, 0, 0, 0.5);
-}
-
-.health-fill {
-    height: 100%;
-    background: 
-        repeating-linear-gradient(
-            90deg,
-            #8b0000 0px,
-            #8b0000 4px,
-            #a00 4px,
-            #a00 8px
-        );
-    width: 100%;
-    transition: width 0.3s ease;
-    position: relative;
-}
-
-.health-fill::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-    animation: pixelShimmer 2s infinite;
-}
-
-.mana-bar {
-    position: absolute;
-    top: 45px;
-    left: 20px;
-    width: 200px;
-    height: 12px;
-    background: #000;
-    border: var(--border-pixel) #006;
-    overflow: hidden;
-    box-shadow: 0 0 10px rgba(30, 144, 255, 0.5);
-}
-
-.mana-fill {
-    height: 100%;
-    background: 
-        repeating-linear-gradient(
-            90deg,
-            #1e90ff 0px,
-            #1e90ff 3px,
-            #00bfff 3px,
-            #00bfff 6px
-        );
-    width: 100%;
-    transition: width 0.3s ease;
-    position: relative;
-}
-
-.mana-fill::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-    animation: pixelShimmer 1.5s infinite;
-}
-
-@keyframes pixelShimmer {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
-}
-
-/* Player Stats */
-.player-stats {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    text-align: right;
-    background: rgba(0, 0, 0, 0.9);
-    padding: 8px 12px;
-    border: var(--border-pixel) var(--border-light);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-    font-size: 12px;
-}
-
-.player-stats div {
-    margin: 2px 0;
-}
-
-.stat-value {
-    color: var(--accent-gold);
-    font-weight: bold;
-    text-shadow: 0 0 5px rgba(218, 165, 32, 0.5);
-}
-
-/* Floor Indicator */
-.floor-indicator {
-    position: absolute;
-    bottom: 20px;
-    left: 20px;
-    background: rgba(0, 0, 0, 0.9);
-    padding: 8px 12px;
-    border: var(--border-pixel) var(--border-light);
-    font-size: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-}
-
-/* Enemy Health */
-.enemy-health {
-    position: absolute;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.9);
-    padding: 6px 16px;
-    border: var(--border-pixel) var(--accent-red);
-    display: none;
-    box-shadow: 0 4px 12px rgba(139, 0, 0, 0.5);
-    text-align: center;
-}
-
-.enemy-health .health-bar {
-    position: relative;
-    top: auto;
-    left: auto;
-    width: 120px;
-    margin: 4px auto 0;
-}
-
-/* =============================================
-   MINI MAP - PIXEL STYLE
-   ============================================= */
-
-.mini-map {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-    width: 150px;
-    height: 150px;
-    background: rgba(0, 0, 0, 0.9);
-    border: var(--border-pixel) var(--accent-gold);
-    padding: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-}
-
-.mini-map .section-title {
-    font-size: 12px;
-    margin-bottom: 6px;
-    text-align: center;
-}
-
-.mini-map-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    grid-template-rows: repeat(5, 1fr);
-    gap: 1px;
-    width: 100%;
-    height: 100%;
-}
-
-.mini-map-room {
-    background: rgba(42, 42, 62, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 8px;
-    transition: all 0.3s;
-}
-
-.mini-map-room.current {
-    background: #8b0000;
-    border-color: var(--accent-gold);
-    box-shadow: 0 0 8px var(--accent-gold);
-}
-
-.mini-map-room.visited {
-    background: rgba(100, 100, 150, 0.5);
-}
-
-.mini-map-room.stairs {
-    background: rgba(218, 165, 32, 0.3);
-    border-color: var(--accent-gold);
-}
-
-.mini-map-room.merchant {
-    background: rgba(32, 178, 170, 0.3);
-    border-color: var(--accent-gold);
-}
-
-.mini-map-room.boss {
-    background: rgba(178, 34, 34, 0.3);
-    border-color: var(--accent-red);
-}
-
-/* =============================================
-   DOORS - PIXEL ART
-   ============================================= */
-
-.door {
-    position: absolute;
-    width: 80px;
-    height: 20px;
-    background: 
-        repeating-linear-gradient(
-            45deg,
-            #8b0000 0px,
-            #8b0000 2px,
-            #600 2px,
-            #600 4px
-        );
-    border: var(--border-pixel) var(--accent-gold);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: var(--accent-gold);
-    font-size: 12px;
-    cursor: pointer;
-    pointer-events: auto;
-    z-index: 5;
-    transition: all 0.3s;
-    box-shadow: 0 0 8px rgba(218, 165, 32, 0.3);
-    font-weight: bold;
-}
-
-.door:hover {
-    background: 
-        repeating-linear-gradient(
-            45deg,
-            #a00 0px,
-            #a00 2px,
-            #800 2px,
-            #800 4px
-        );
-    box-shadow: 0 0 15px var(--accent-gold);
-    transform: scale(1.05);
-}
-
-.door.top {
-    top: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-.door.bottom {
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-.door.left {
-    left: 30px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 20px;
-    height: 80px;
-}
-
-.door.right {
-    right: 30px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 20px;
-    height: 80px;
-}
-
-.door.locked {
-    background: 
-        repeating-linear-gradient(
-            45deg,
-            #333 0px,
-            #333 2px,
-            #222 2px,
-            #222 4px
-        );
-    border-color: #666;
-    color: #666;
-    cursor: not-allowed;
-    box-shadow: none;
-}
-
-.door.locked:hover {
-    background: 
-        repeating-linear-gradient(
-            45deg,
-            #333 0px,
-            #333 2px,
-            #222 2px,
-            #222 4px
-        );
-    box-shadow: none;
-    transform: none;
-}
-
-/* =============================================
-   SIDEBAR - PIXEL ART STYLE
-   ============================================= */
-
-.sidebar {
-    flex: 1;
-    background: rgba(10, 10, 20, 0.95);
-    border-left: var(--border-pixel) var(--border-dark);
-    display: flex;
-    flex-direction: column;
-    padding: 12px;
-    overflow-y: auto;
-    backdrop-filter: blur(5px);
-}
-
-.inventory, .skills, .quest-log, .equipment {
-    margin-bottom: 15px;
-    background: rgba(0, 0, 0, 0.7);
-    border: var(--border-pixel) var(--border-dark);
-    padding: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-.section-title {
-    color: var(--accent-gold);
-    border-bottom: var(--border-pixel) var(--border-light);
-    padding-bottom: 6px;
-    margin-bottom: 10px;
-    font-size: 14px;
-    text-shadow: 0 0 5px rgba(218, 165, 32, 0.5);
-    text-align: center;
-}
-
-/* Inventory Slots */
-.inventory-slots {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 6px;
-}
-
-.inventory-slot {
-    width: 45px;
-    height: 45px;
-    background: 
-        repeating-linear-gradient(
-            45deg,
-            #1e1e2e 0px,
-            #1e1e2e 2px,
-            #2a2a3a 2px,
-            #2a2a3a 4px
-        );
-    border: var(--border-pixel) var(--border-light);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 18px;
-    cursor: pointer;
-    transition: all 0.2s;
-    position: relative;
-}
-
-.inventory-slot:hover {
-    border-color: var(--accent-gold);
-    background: 
-        repeating-linear-gradient(
-            45deg,
-            #2a2a3a 0px,
-            #2a2a3a 2px,
-            #36364a 2px,
-            #36364a 4px
-        );
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-.inventory-slot.equipped {
-    border-color: var(--accent-gold);
-    background: rgba(218, 165, 32, 0.1);
-    box-shadow: 0 0 10px rgba(218, 165, 32, 0.3);
-}
-
-/* Rarity Borders */
-.item-rarity-common { border-left: 3px solid var(--common); }
-.item-rarity-uncommon { border-left: 3px solid var(--uncommon); }
-.item-rarity-rare { border-left: 3px solid var(--rare); }
-.item-rarity-epic { border-left: 3px solid var(--epic); }
-.item-rarity-legendary { 
-    border-left: 3px solid var(--legendary);
-    animation: pixelGlow 2s infinite alternate;
-}
-
-@keyframes pixelGlow {
-    from { 
-        box-shadow: 
-            inset 0 0 5px var(--legendary),
-            0 0 5px var(--legendary); 
-    }
-    to { 
-        box-shadow: 
-            inset 0 0 10px var(--legendary),
-            0 0 10px var(--legendary),
-            0 0 20px var(--legendary); 
-    }
-}
-
-/* Equipment Slots */
-.equipment-slots {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-}
-
-.equipment-slot {
-    background: 
-        repeating-linear-gradient(
-            45deg,
-            #28283c 0px,
-            #28283c 2px,
-            #32324a 2px,
-            #32324a 4px
-        );
-    border: var(--border-pixel) var(--border-light);
-    padding: 8px;
-    text-align: center;
-    min-height: 55px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-.equipment-slot-type {
-    font-size: 9px;
-    color: var(--text-dim);
-    margin-bottom: 4px;
-}
-
-/* Skills */
-.skill-slots {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.skill {
-    padding: 8px 10px;
-    background: 
-        repeating-linear-gradient(
-            45deg,
-            #1e1e2e 0px,
-            #1e1e2e 2px,
-            #2a2a3a 2px,
-            #2a2a3a 4px
-        );
-    border: var(--border-pixel) var(--border-light);
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 12px;
-}
-
-.skill:hover {
-    border-color: var(--accent-gold);
-    background: 
-        repeating-linear-gradient(
-            45deg,
-            #2a2a3a 0px,
-            #2a2a3a 2px,
-            #36364a 2px,
-            #36364a 4px
-        );
-    transform: translateX(3px);
-}
-
-.skill-cooldown {
-    color: var(--text-dim);
-    font-size: 10px;
-}
-
-/* Quest Log */
-.quest-item {
-    padding: 6px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    font-size: 11px;
-    display: flex;
-    align-items: center;
-}
-
-.quest-item.completed {
-    color: var(--accent-gold);
-    text-decoration: line-through;
-}
-
-.quest-item::before {
-    content: '•';
-    color: var(--accent-gold);
-    margin-right: 6px;
-}
-
-/* =============================================
-   SCREENS (START, GAME OVER) - PIXEL ART
-   ============================================= */
-
-.screen {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background: 
-        radial-gradient(circle at center, rgba(10, 10, 15, 0.95) 0%, rgba(5, 5, 8, 0.98) 100%),
-        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" opacity="0.05"><path d="M0,0 L100,100 M100,0 L0,100" stroke="%238b0000" stroke-width="1"/></svg>');
-    z-index: 100;
-    backdrop-filter: blur(5px);
-}
-
-.title {
-    font-size: 48px;
-    color: var(--accent-gold);
-    text-shadow: 
-        0 0 10px rgba(218, 165, 32, 0.5),
-        0 0 20px rgba(218, 165, 32, 0.3),
-        0 0 30px rgba(218, 165, 32, 0.2);
-    margin-bottom: 12px;
-    letter-spacing: 3px;
-    animation: pixelTitleGlow 3s ease-in-out infinite alternate;
-    text-align: center;
-}
-
-@keyframes pixelTitleGlow {
-    from { 
-        text-shadow: 
-            0 0 10px rgba(218, 165, 32, 0.5), 
-            0 0 20px rgba(218, 165, 32, 0.3); 
-    }
-    to { 
-        text-shadow: 
-            0 0 15px rgba(218, 165, 32, 0.7), 
-            0 0 25px rgba(218, 165, 32, 0.5), 
-            0 0 35px rgba(218, 165, 32, 0.3); 
-    }
-}
-
-.subtitle {
-    font-size: 18px;
-    color: var(--text-dim);
-    margin-bottom: 30px;
-    text-align: center;
-    max-width: 600px;
-    line-height: 1.4;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-/* Buttons - Pixel Style */
-.btn {
-    background: 
-        repeating-linear-gradient(
-            45deg,
-            #2a2a3a 0px,
-            #2a2a3a 2px,
-            #1a1a2a 2px,
-            #1a1a2a 4px
-        );
-    color: var(--text-light);
-    border: var(--border-pixel) var(--border-light);
-    padding: 12px 28px;
-    margin: 8px;
-    font-family: 'Cinzel', serif;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.3s;
-    position: relative;
-    overflow: hidden;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-}
-
-.btn:before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(218, 165, 32, 0.2), transparent);
-    transition: left 0.5s;
-}
-
-.btn:hover {
-    border-color: var(--accent-gold);
-    color: var(--accent-gold);
-    box-shadow: 0 0 20px rgba(218, 165, 32, 0.4);
-    transform: translateY(-2px);
-}
-
-.btn:hover:before {
-    left: 100%;
-}
-
-.btn-primary {
-    background: 
-        repeating-linear-gradient(
-            45deg,
-            #8b0000 0px,
-            #8b0000 2px,
-            #600000 2px,
-            #600000 4px
-        );
-    border-color: var(--accent-red);
-}
-
-.btn-primary:hover {
-    border-color: #ff0000;
-    color: #fff;
-    box-shadow: 0 0 20px rgba(139, 0, 0, 0.6);
-}
-
-/* =============================================
-   COMBAT TEXT & EFFECTS
-   ============================================= */
-
-.combat-text {
-    position: absolute;
-    color: #fff;
-    font-weight: bold;
-    text-shadow: 2px 2px 0 #000;
-    pointer-events: none;
-    z-index: 20;
-    animation: pixelFloatUp 1s forwards;
-    font-size: 16px;
-    font-family: 'Courier New', monospace;
-}
-
-@keyframes pixelFloatUp {
-    0% { transform: translateY(0) scale(1); opacity: 1; }
-    50% { transform: translateY(-25px) scale(1.1); opacity: 0.8; }
-    100% { transform: translateY(-50px) scale(1); opacity: 0; }
-}
-
-/* =============================================
-   TOOLTIP - PIXEL STYLE
-   ============================================= */
-
-.tooltip {
-    position: absolute;
-    background: rgba(0, 0, 0, 0.95);
-    border: var(--border-pixel) var(--accent-gold);
-    padding: 10px;
-    max-width: 220px;
-    z-index: 1000;
-    pointer-events: none;
-    display: none;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(2px);
-    font-size: 11px;
-}
-
-.tooltip-name {
-    color: var(--accent-gold);
-    font-weight: bold;
-    margin-bottom: 4px;
-    font-size: 12px;
-}
-
-.tooltip-rarity-common { color: var(--common); }
-.tooltip-rarity-uncommon { color: var(--uncommon); }
-.tooltip-rarity-rare { color: var(--rare); }
-.tooltip-rarity-epic { color: var(--epic); }
-.tooltip-rarity-legendary { 
-    color: var(--legendary);
-    animation: pixelPulse 1.5s infinite;
-}
-
-@keyframes pixelPulse {
-    0% { opacity: 0.7; text-shadow: 0 0 5px var(--legendary); }
-    50% { opacity: 1; text-shadow: 0 0 10px var(--legendary); }
-    100% { opacity: 0.7; text-shadow: 0 0 5px var(--legendary); }
-}
-
-.tooltip-desc {
-    font-size: 10px;
-    color: var(--text-light);
-    margin-bottom: 4px;
-    line-height: 1.3;
-}
-
-.tooltip-stats {
-    font-size: 9px;
-    color: var(--text-dim);
-    border-top: 1px solid rgba(255,255,255,0.1);
-    padding-top: 4px;
-    margin-top: 4px;
-}
-
-/* =============================================
-   ROOM TRANSITION
-   ============================================= */
-
-.room-transition {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: #000;
-    opacity: 0;
-    z-index: 50;
-    pointer-events: none;
-    transition: opacity 0.5s;
-}
-
-/* =============================================
-   MERCHANT - PIXEL STYLE
-   ============================================= */
-
-.merchant {
-    position: absolute;
-    bottom: 100px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.95);
-    border: var(--border-pixel) var(--accent-gold);
-    padding: 16px;
-    display: none;
-    z-index: 25;
-    box-shadow: 0 0 30px rgba(218, 165, 32, 0.5);
-    backdrop-filter: blur(2px);
-    min-width: 380px;
-}
-
-.merchant-items {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    margin-top: 12px;
-}
-
-.merchant-item {
-    background: 
-        repeating-linear-gradient(
-            45deg,
-            #28283c 0px,
-            #28283c 2px,
-            #32324a 2px,
-            #32324a 4px
-        );
-    border: var(--border-pixel) var(--border-light);
-    padding: 8px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-size: 10px;
-}
-
-.merchant-item:hover {
-    border-color: var(--accent-gold);
-    transform: scale(1.03);
-}
-
-/* =============================================
-   SCROLLBAR - PIXEL STYLE
-   ============================================= */
-
-::-webkit-scrollbar {
-    width: 6px;
-}
-
-::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.3);
-}
-
-::-webkit-scrollbar-thumb {
-    background: 
-        repeating-linear-gradient(
-            45deg,
-            #8b0000 0px,
-            #8b0000 2px,
-            #600 2px,
-            #600 4px
-        );
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: 
-        repeating-linear-gradient(
-            45deg,
-            #a00 0px,
-            #a00 2px,
-            #800 2px,
-            #800 4px
-        );
-}
-
-/* =============================================
-   RESPONSIVE DESIGN
-   ============================================= */
-
-@media (max-width: 1200px) {
-    .game-container {
-        width: 100%;
-        height: 100%;
-        border: none;
-        border-radius: 0;
-    }
-    
-    .game-container::before {
-        display: none;
-    }
-    
-    .title {
-        font-size: 36px;
-    }
-    
-    .subtitle {
-        font-size: 16px;
-        padding: 0 20px;
-    }
-}
-
-@media (max-width: 768px) {
-    .sidebar {
-        display: none;
-    }
-    
-    .game-area {
-        flex: 1;
-    }
-    
-    .health-bar,
-    .mana-bar {
-        width: 150px;
-    }
-    
-    .player-stats {
-        font-size: 10px;
-        padding: 6px 8px;
-    }
-    
-    .mini-map {
-        width: 120px;
-        height: 120px;
-    }
-}
-
-/* =============================================
-   PIXEL ART UTILITY CLASSES
-   ============================================= */
-
-.pixel-border {
-    border: var(--border-pixel);
-}
-
-.pixel-border-red {
-    border: var(--border-pixel) var(--accent-red);
-}
-
-.pixel-border-gold {
-    border: var(--border-pixel) var(--accent-gold);
-}
-
-.pixel-bg-dark {
-    background: 
-        repeating-linear-gradient(
-            45deg,
-            #1a1a2e 0px,
-            #1a1a2e 2px,
-            #2a2a3a 2px,
-            #2a2a3a 4px
-        );
-}
-
-.pixel-bg-darker {
-    background: 
-        repeating-linear-gradient(
-            45deg,
-            #0a0a0f 0px,
-            #0a0a0f 2px,
-            #1a1a2a 2px,
-            #1a1a2a 4px
-        );
-}
-
-/* Pixel Art Text */
-.pixel-text {
-    font-family: 'Courier New', monospace;
-    image-rendering: pixelated;
-    text-shadow: 1px 1px 0 #000;
-}
-
-.pixel-text-small {
-    font-size: 10px;
-    line-height: 1.2;
-}
-
-.pixel-text-large {
-    font-size: 16px;
-    line-height: 1.3;
-}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+        }
+
+        :root {
+            /* Cores Pixel Art Dark Fantasy */
+            --dark-bg: #0a0a0f;
+            --darker-bg: #050508;
+            --accent-red: #8b0000;
+            --accent-gold: #daa520;
+            --accent-silver: #c0c0c0;
+            --text-light: #e8e8e8;
+            --text-dim: #a0a0a0;
+            --border-dark: #1a1a2e;
+            --border-light: #2d2d4d;
+            
+            /* Cores de raridade */
+            --common: #969696;
+            --uncommon: #2ecc71;
+            --rare: #3498db;
+            --epic: #9b59b6;
+            --legendary: #f1c40f;
+            
+            /* Tamanhos pixelados */
+            --pixel-size: 2px;
+            --border-pixel: 2px solid;
+        }
+
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background: #0a0a0f;
+            color: var(--text-light);
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .game-container {
+            position: relative;
+            width: 1200px;
+            height: 700px;
+            display: flex;
+            background: var(--darker-bg);
+            border: var(--border-pixel) var(--accent-red);
+            overflow: hidden;
+        }
+
+        .game-area {
+            flex: 3;
+            position: relative;
+            overflow: hidden;
+            background: #0a0a0f;
+        }
+
+        #game-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* UI Pixel Art */
+        .ui-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .health-bar, .mana-bar {
+            position: absolute;
+            left: 20px;
+            background: #000;
+            border: var(--border-pixel) #400;
+            overflow: hidden;
+        }
+
+        .health-bar {
+            top: 20px;
+            width: 200px;
+            height: 16px;
+        }
+
+        .mana-bar {
+            top: 45px;
+            width: 200px;
+            height: 12px;
+            border-color: #006;
+        }
+
+        .health-fill, .mana-fill {
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .health-fill { background: #8b0000; }
+        .mana-fill { background: #1e90ff; }
+
+        .player-stats {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 8px 12px;
+            border: var(--border-pixel) var(--border-light);
+            font-size: 8px;
+        }
+
+        .stat-value {
+            color: var(--accent-gold);
+        }
+
+        .floor-indicator {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 8px 12px;
+            border: var(--border-pixel) var(--border-light);
+            font-size: 8px;
+        }
+
+        /* Mini Map Pixel Art */
+        .mini-map {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 120px;
+            height: 120px;
+            background: rgba(0, 0, 0, 0.9);
+            border: var(--border-pixel) var(--accent-gold);
+            padding: 5px;
+        }
+
+        .mini-map-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-template-rows: repeat(5, 1fr);
+            gap: 1px;
+            width: 100%;
+            height: 100%;
+        }
+
+        .mini-map-room {
+            background: #2a2a3a;
+            border: 1px solid #444;
+            font-size: 6px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .mini-map-room.current { background: #8b0000; }
+        .mini-map-room.visited { background: #4a4a6a; }
+        .mini-map-room.stairs { background: #daa520; }
+        .mini-map-room.merchant { background: #32cd32; }
+        .mini-map-room.boss { background: #dc143c; }
+
+        /* Sidebar Pixel Art */
+        .sidebar {
+            flex: 1;
+            background: rgba(10, 10, 20, 0.95);
+            border-left: var(--border-pixel) var(--border-dark);
+            padding: 10px;
+            overflow-y: auto;
+        }
+
+        .inventory, .skills, .quest-log, .equipment {
+            margin-bottom: 15px;
+            background: rgba(0, 0, 0, 0.7);
+            border: var(--border-pixel) var(--border-dark);
+            padding: 10px;
+        }
+
+        .section-title {
+            color: var(--accent-gold);
+            border-bottom: var(--border-pixel) var(--border-light);
+            padding-bottom: 5px;
+            margin-bottom: 8px;
+            font-size: 10px;
+            text-align: center;
+        }
+
+        .inventory-slots {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+        }
+
+        .inventory-slot {
+            width: 40px;
+            height: 40px;
+            background: #2a2a3a;
+            border: var(--border-pixel) var(--border-light);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 14px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .inventory-slot:hover::after {
+            content: 'X';
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #8b0000;
+            color: white;
+            width: 12px;
+            height: 12px;
+            font-size: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid white;
+        }
+
+        .equipment-slots {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 5px;
+        }
+
+        .equipment-slot {
+            background: #2a2a3a;
+            border: var(--border-pixel) var(--border-light);
+            padding: 5px;
+            text-align: center;
+            min-height: 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 8px;
+        }
+
+        /* Screens */
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(10, 10, 15, 0.95);
+            z-index: 100;
+        }
+
+        .title {
+            font-size: 24px;
+            color: var(--accent-gold);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .subtitle {
+            font-size: 10px;
+            color: var(--text-dim);
+            margin-bottom: 30px;
+            text-align: center;
+            max-width: 600px;
+            line-height: 1.5;
+        }
+
+        .btn {
+            background: #2a2a3a;
+            color: var(--text-light);
+            border: var(--border-pixel) var(--border-light);
+            padding: 10px 20px;
+            margin: 5px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            border-color: var(--accent-gold);
+            color: var(--accent-gold);
+        }
+
+        .btn-primary {
+            background: #8b0000;
+            border-color: var(--accent-red);
+        }
+
+        /* Scrollbar Pixel */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a1a2e;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #8b0000;
+        }
     </style>
 </head>
 <body>
     <div class="game-container">
         <div class="game-area">
             <canvas id="game-canvas" width="900" height="700"></canvas>
-            
-            <!-- Door Elements -->
-            <div class="door top" id="door-top" data-direction="top">↑</div>
-            <div class="door bottom" id="door-bottom" data-direction="bottom">↓</div>
-            <div class="door left" id="door-left" data-direction="left">←</div>
-            <div class="door right" id="door-right" data-direction="right">→</div>
-            
-            <!-- Room Transition Overlay -->
-            <div class="room-transition" id="room-transition"></div>
-            
-            <!-- Merchant -->
-            <div class="merchant" id="merchant">
-                <div class="section-title">Mercador das Sombras</div>
-                <div>Seu ouro: <span id="merchant-gold">0</span></div>
-                <div class="merchant-items" id="merchant-items">
-                    <!-- Merchant items will be populated by JS -->
-                </div>
-                <button class="btn" id="close-merchant" style="margin-top: 15px; pointer-events: auto;">Fechar</button>
-            </div>
             
             <div class="ui-overlay">
                 <div class="health-bar">
@@ -1070,104 +334,88 @@ body {
                 </div>
                 
                 <div class="player-stats">
-                    <div>Nível: <span class="stat-value" id="player-level">1</span></div>
-                    <div>Dano: <span class="stat-value" id="player-damage">10-15</span></div>
-                    <div>Defesa: <span class="stat-value" id="player-defense">5</span></div>
-                    <div>Ouro: <span class="stat-value" id="player-gold">0</span></div>
+                    <div>NVL: <span class="stat-value" id="player-level">1</span></div>
+                    <div>DMG: <span class="stat-value" id="player-damage">10-15</span></div>
+                    <div>DEF: <span class="stat-value" id="player-defense">5</span></div>
+                    <div>GOLD: <span class="stat-value" id="player-gold">0</span></div>
                 </div>
                 
                 <div class="floor-indicator">
-                    Dungeon: <span id="floor-number">1</span> - Sala: <span id="room-number">1</span>
+                    FLOOR: <span id="floor-number">1</span> ROOM: <span id="room-number">1</span>
                 </div>
                 
-                <div class="enemy-health" id="enemy-health">
-                    <div id="enemy-name">Esqueleto</div>
-                    <div class="health-bar" style="width: 120px; margin-top: 5px;">
-                        <div class="health-fill" id="enemy-health-fill"></div>
-                    </div>
-                </div>
-                
-                <!-- Mini Map -->
                 <div class="mini-map">
-                    <div class="section-title">Mapa</div>
-                    <div class="mini-map-grid" id="mini-map">
-                        <!-- Mini map will be populated by JS -->
-                    </div>
+                    <div class="mini-map-grid" id="mini-map"></div>
                 </div>
             </div>
         </div>
         
         <div class="sidebar">
             <div class="equipment">
-                <div class="section-title">Equipamento</div>
+                <div class="section-title">EQUIP</div>
                 <div class="equipment-slots">
                     <div class="equipment-slot" data-slot="weapon">
-                        <div class="equipment-slot-type">Arma</div>
+                        <div>WEAPON</div>
                         <div id="equipped-weapon">-</div>
                     </div>
                     <div class="equipment-slot" data-slot="armor">
-                        <div class="equipment-slot-type">Armadura</div>
+                        <div>ARMOR</div>
                         <div id="equipped-armor">-</div>
+                    </div>
+                    <div class="equipment-slot" data-slot="helmet">
+                        <div>HELMET</div>
+                        <div id="equipped-helmet">-</div>
+                    </div>
+                    <div class="equipment-slot" data-slot="boots">
+                        <div>BOOTS</div>
+                        <div id="equipped-boots">-</div>
+                    </div>
+                    <div class="equipment-slot" data-slot="ring">
+                        <div>RING</div>
+                        <div id="equipped-ring">-</div>
+                    </div>
+                    <div class="equipment-slot" data-slot="amulet">
+                        <div>AMULET</div>
+                        <div id="equipped-amulet">-</div>
                     </div>
                 </div>
             </div>
             
             <div class="inventory">
-                <div class="section-title">Inventário</div>
-                <div class="inventory-slots" id="inventory-slots">
-                    <!-- Inventory slots will be populated by JS -->
-                </div>
-            </div>
-            
-            <div class="skills">
-                <div class="section-title">Habilidades</div>
-                <div class="skill-slots" id="skill-slots">
-                    <!-- Skills will be populated by JS -->
-                </div>
-            </div>
-            
-            <div class="quest-log">
-                <div class="section-title">Missões</div>
-                <div class="quest-list" id="quest-list">
-                    <!-- Quests will be populated by JS -->
-                </div>
+                <div class="section-title">INVENTORY</div>
+                <div class="inventory-slots" id="inventory-slots"></div>
             </div>
         </div>
         
         <!-- Start Screen -->
         <div class="screen start-screen">
             <div class="title">SHADOWCRYPT</div>
-            <div class="subtitle">Um jogo de Dark Fantasy Dungeon Crawler. Explore masmorras amaldiçoadas, enfrente hordas de não-mortos e descubra segredos antigos.</div>
-            <button class="btn btn-primary" id="start-btn">Iniciar Jornada</button>
+            <div class="subtitle">A PIXEL ART DARK FANTASY DUNGEON CRAWLER</div>
+            <button class="btn btn-primary" id="start-btn">START QUEST</button>
         </div>
         
         <!-- Game Over Screen -->
         <div class="screen game-over" style="display: none;">
-            <div class="title">FIM DE JOGO</div>
-            <div class="subtitle">Sua jornada termina aqui, nas profundezas de ShadowCrypt...</div>
-            <div id="game-over-stats" style="margin-bottom: 30px; text-align: center;">
-                <!-- Game over stats will be populated by JS -->
-            </div>
-            <button class="btn btn-primary" id="restart-btn">Tentar Novamente</button>
+            <div class="title">GAME OVER</div>
+            <div class="subtitle">YOUR JOURNEY ENDS IN THE DEPTHS...</div>
+            <div id="game-over-stats" style="margin-bottom: 20px; text-align: center; font-size: 8px;"></div>
+            <button class="btn btn-primary" id="restart-btn">TRY AGAIN</button>
         </div>
     </div>
-    
-    <div class="tooltip" id="tooltip"></div>
 
     <script>
         // =============================================
-        // GAME ENGINE & CORE SYSTEMS
+        // PIXEL ART GAME ENGINE
         // =============================================
         
-        // Canvas setup
         const canvas = document.getElementById('game-canvas');
         const ctx = canvas.getContext('2d');
         
         // Game state
-        let gameState = 'menu'; // menu, playing, paused, gameOver
+        let gameState = 'menu';
         let player = {};
         let currentFloor = 1;
-        let currentRoom = 1;
+        let currentRoom = 13;
         let rooms = [];
         let enemies = [];
         let items = [];
@@ -1179,68 +427,134 @@ body {
         let stairsLocation = null;
         let merchantRoom = null;
         
-        // Game data - Agora o personagem pode usar qualquer equipamento
+        // Pixel Art Sprites (simplificados)
+        const sprites = {
+            player: {
+                body: [
+                    [0,1,1,1,0],
+                    [1,2,2,2,1],
+                    [1,2,2,2,1],
+                    [0,1,1,1,0],
+                    [0,1,0,1,0]
+                ],
+                colors: ['#000000', '#4a4a6a', '#6a6a8a']
+            },
+            skeleton: {
+                body: [
+                    [0,1,1,1,0],
+                    [1,2,2,2,1],
+                    [0,1,2,1,0],
+                    [0,1,1,1,0],
+                    [0,1,0,1,0]
+                ],
+                colors: ['#000000', '#c0c0c0', '#ffffff']
+            },
+            zombie: {
+                body: [
+                    [0,1,1,1,0],
+                    [1,2,2,2,1],
+                    [1,2,3,2,1],
+                    [0,1,1,1,0],
+                    [1,0,1,0,1]
+                ],
+                colors: ['#000000', '#2d5a27', '#4a7a3a']
+            },
+            chest: {
+                body: [
+                    [1,1,1,1,1],
+                    [1,2,2,2,1],
+                    [1,2,3,2,1],
+                    [1,2,2,2,1],
+                    [1,1,1,1,1]
+                ],
+                colors: ['#000000', '#8b0000', '#daa520']
+            },
+            mimic: {
+                body: [
+                    [1,1,1,1,1],
+                    [1,2,3,2,1],
+                    [1,2,2,2,1],
+                    [1,2,2,2,1],
+                    [1,1,1,1,1]
+                ],
+                colors: ['#000000', '#dc143c', '#ff0000']
+            }
+        };
+
+        // Desenhar sprite pixel art
+        function drawSprite(sprite, x, y, size = 20) {
+            const pixelSize = size / 5;
+            for (let row = 0; row < 5; row++) {
+                for (let col = 0; col < 5; col++) {
+                    const colorIndex = sprite.body[row][col];
+                    if (colorIndex > 0) {
+                        ctx.fillStyle = sprite.colors[colorIndex];
+                        ctx.fillRect(
+                            x + col * pixelSize - size/2,
+                            y + row * pixelSize - size/2,
+                            pixelSize,
+                            pixelSize
+                        );
+                    }
+                }
+            }
+        }
+
+        // Expanded equipment types
         const weaponTypes = [
-            // Espadas (todas as classes)
-            { name: 'Espada Curta', damage: [8, 12], rarity: 'common', icon: '⚔️', type: 'sword' },
-            { name: 'Espada Longa', damage: [12, 18], rarity: 'uncommon', icon: '⚔️', type: 'sword' },
-            { name: 'Espada Bastarda', damage: [15, 22], rarity: 'rare', icon: '🗡️', type: 'sword' },
-            { name: 'Lâmina Sombria', damage: [20, 30], rarity: 'epic', icon: '🗡️', type: 'sword' },
-            { name: 'Espada do Rei Caído', damage: [25, 40], rarity: 'legendary', icon: '⚔️', type: 'sword' },
-            
-            // Machados
-            { name: 'Machado de Batalha', damage: [10, 16], rarity: 'common', icon: '🪓', type: 'axe' },
-            { name: 'Machado Duplo', damage: [14, 22], rarity: 'uncommon', icon: '🪓', type: 'axe' },
-            { name: 'Machado do Carrasco', damage: [18, 28], rarity: 'rare', icon: '⛏️', type: 'axe' },
-            { name: 'Machado Élfico', damage: [22, 35], rarity: 'epic', icon: '🪓', type: 'axe' },
-            { name: 'Machado do Titã', damage: [28, 45], rarity: 'legendary', icon: '⛏️', type: 'axe' },
-            
-            // Cajados/Varinhas (magos)
-            { name: 'Cajado Simples', damage: [5, 8], rarity: 'common', icon: '🦯', type: 'staff' },
-            { name: 'Varinha Arcana', damage: [8, 12], rarity: 'uncommon', icon: '✨', type: 'staff' },
-            { name: 'Cetro do Arcanista', damage: [12, 18], rarity: 'rare', icon: '🔮', type: 'staff' },
-            { name: 'Cajado do Vácuo', damage: [15, 25], rarity: 'epic', icon: '🌌', type: 'staff' },
-            { name: 'Cetro do Arquimago', damage: [20, 35], rarity: 'legendary', icon: '🌟', type: 'staff' },
-            
-            // Arcos (ladinos)
-            { name: 'Arco Curto', damage: [6, 10], rarity: 'common', icon: '🏹', type: 'bow' },
-            { name: 'Arco Longo', damage: [9, 14], rarity: 'uncommon', icon: '🏹', type: 'bow' },
-            { name: 'Arco Composto', damage: [12, 19], rarity: 'rare', icon: '🎯', type: 'bow' },
-            { name: 'Arco Élfico', damage: [16, 26], rarity: 'epic', icon: '🏹', type: 'bow' },
-            { name: 'Arco do Caçador', damage: [20, 32], rarity: 'legendary', icon: '🎯', type: 'bow' }
+            { name: 'Short Sword', damage: [8, 12], rarity: 'common', type: 'weapon', slot: 'weapon' },
+            { name: 'Long Sword', damage: [12, 18], rarity: 'uncommon', type: 'weapon', slot: 'weapon' },
+            { name: 'Battle Axe', damage: [15, 22], rarity: 'rare', type: 'weapon', slot: 'weapon' },
+            { name: 'Dark Blade', damage: [20, 30], rarity: 'epic', type: 'weapon', slot: 'weapon' },
+            { name: 'Kings Sword', damage: [25, 40], rarity: 'legendary', type: 'weapon', slot: 'weapon' }
         ];
 
         const armorTypes = [
-            { name: 'Armadura de Couro', defense: 3, rarity: 'common', icon: '🧥' },
-            { name: 'Cota de Malha', defense: 6, rarity: 'uncommon', icon: '⛓️' },
-            { name: 'Armadura de Placas', defense: 10, rarity: 'rare', icon: '🛡️' },
-            { name: 'Armadura Élfica', defense: 15, rarity: 'epic', icon: '🍃' },
-            { name: 'Armadura do Dragão', defense: 25, rarity: 'legendary', icon: '🐉' }
+            { name: 'Leather Armor', defense: 3, rarity: 'common', type: 'armor', slot: 'armor' },
+            { name: 'Chain Mail', defense: 6, rarity: 'uncommon', type: 'armor', slot: 'armor' },
+            { name: 'Plate Armor', defense: 10, rarity: 'rare', type: 'armor', slot: 'armor' },
+            { name: 'Dragon Armor', defense: 15, rarity: 'epic', type: 'armor', slot: 'armor' },
+            { name: 'Godly Plate', defense: 25, rarity: 'legendary', type: 'armor', slot: 'armor' }
         ];
 
-        const floorEnemies = {
-            1: ['skeleton', 'zombie'],
-            2: ['skeleton', 'zombie', 'ghost'],
-            3: ['ghost', 'wraith', 'vampire'],
-            4: ['vampire', 'lich', 'demon'],
-            5: ['demon', 'ancient_dragon', 'shadow_lord']
-        };
+        const helmetTypes = [
+            { name: 'Leather Cap', defense: 1, rarity: 'common', type: 'helmet', slot: 'helmet' },
+            { name: 'Iron Helm', defense: 2, rarity: 'uncommon', type: 'helmet', slot: 'helmet' },
+            { name: 'Steel Helm', defense: 3, rarity: 'rare', type: 'helmet', slot: 'helmet' },
+            { name: 'Dragon Helm', defense: 5, rarity: 'epic', type: 'helmet', slot: 'helmet' },
+            { name: 'Crown of Kings', defense: 8, rarity: 'legendary', type: 'helmet', slot: 'helmet' }
+        ];
 
-        const floorBosses = {
-            1: { name: 'Lich Senhor das Trevas', type: 'lich' },
-            2: { name: 'Vampiro Ancestral', type: 'vampire_lord' },
-            3: { name: 'Rei Esqueleto', type: 'skeleton_king' },
-            4: { name: 'Demônio do Abismo', type: 'abyssal_demon' },
-            5: { name: 'Dragão Ancestral', type: 'ancient_dragon' }
-        };
+        const bootTypes = [
+            { name: 'Leather Boots', speed: 1, rarity: 'common', type: 'boots', slot: 'boots' },
+            { name: 'Iron Boots', speed: 1, defense: 1, rarity: 'uncommon', type: 'boots', slot: 'boots' },
+            { name: 'Steel Boots', speed: 1, defense: 2, rarity: 'rare', type: 'boots', slot: 'boots' },
+            { name: 'Dragon Boots', speed: 2, defense: 3, rarity: 'epic', type: 'boots', slot: 'boots' },
+            { name: 'Boots of Speed', speed: 3, defense: 2, rarity: 'legendary', type: 'boots', slot: 'boots' }
+        ];
+
+        const ringTypes = [
+            { name: 'Copper Ring', damage: [1, 2], rarity: 'common', type: 'ring', slot: 'ring' },
+            { name: 'Silver Ring', damage: [2, 3], rarity: 'uncommon', type: 'ring', slot: 'ring' },
+            { name: 'Gold Ring', damage: [3, 5], rarity: 'rare', type: 'ring', slot: 'ring' },
+            { name: 'Ruby Ring', damage: [5, 8], rarity: 'epic', type: 'ring', slot: 'ring' },
+            { name: 'Dragon Ring', damage: [8, 12], rarity: 'legendary', type: 'ring', slot: 'ring' }
+        ];
+
+        const amuletTypes = [
+            { name: 'Bone Amulet', health: 10, rarity: 'common', type: 'amulet', slot: 'amulet' },
+            { name: 'Silver Amulet', health: 20, rarity: 'uncommon', type: 'amulet', slot: 'amulet' },
+            { name: 'Gold Amulet', health: 30, rarity: 'rare', type: 'amulet', slot: 'amulet' },
+            { name: 'Ruby Amulet', health: 50, rarity: 'epic', type: 'amulet', slot: 'amulet' },
+            { name: 'Amulet of Life', health: 100, rarity: 'legendary', type: 'amulet', slot: 'amulet' }
+        ];
 
         // Input handling
         const keys = {};
         const mouse = { x: 0, y: 0, down: false };
         
-        // Game systems
+        // Game engine
         const game = {
-            // Core game loop
             loop: function() {
                 if (gameState !== 'playing') return;
                 
@@ -1249,7 +563,6 @@ body {
                 requestAnimationFrame(() => this.loop());
             },
             
-            // Update game state
             update: function() {
                 this.updatePlayer();
                 this.updateEnemies();
@@ -1258,176 +571,8 @@ body {
                 this.updateCombatTexts();
                 this.checkCollisions();
                 this.updateUI();
-                this.updateDoors();
-                this.updateMiniMap();
-                
-                // Update player attack cooldown
-                if (player.attackCooldown > 0) {
-                    player.attackCooldown--;
-                }
-
-                // Update skill cooldowns
-                player.skills.forEach(skill => {
-                    if (skill.cooldown > 0) {
-                        skill.cooldown--;
-                    }
-                });
             },
             
-            // Update door states
-            updateDoors: function() {
-                // Check if room is cleared
-                if ((enemies.length === 0 && !roomCleared) || rooms[currentRoom]?.type === 'merchant' || rooms[currentRoom]?.type === 'stairs') {
-                    roomCleared = true;
-                    this.unlockDoors();
-                }
-                
-                // Update door visibility
-                const directions = ['top', 'bottom', 'left', 'right'];
-                directions.forEach(direction => {
-                    const door = document.getElementById(`door-${direction}`);
-                    if (this.hasDoor(direction)) {
-                        door.style.display = 'flex';
-                        if (roomCleared) {
-                            door.classList.remove('locked');
-                        } else {
-                            door.classList.add('locked');
-                        }
-                    } else {
-                        door.style.display = 'none';
-                    }
-                });
-            },
-            
-            // Update mini map - CORRIGIDO
-            updateMiniMap: function() {
-                visitedRooms.add(currentRoom);
-                const miniMap = document.getElementById('mini-map');
-                miniMap.innerHTML = '';
-                
-                // Mapa 5x5
-                for (let row = 0; row < 5; row++) {
-                    for (let col = 0; col < 5; col++) {
-                        const roomNumber = row * 5 + col + 1;
-                        const roomElement = document.createElement('div');
-                        roomElement.className = 'mini-map-room';
-                        
-                        if (roomNumber === currentRoom) {
-                            roomElement.classList.add('current');
-                            roomElement.textContent = '●';
-                        } else if (visitedRooms.has(roomNumber)) {
-                            roomElement.classList.add('visited');
-                            
-                            // Adicionar ícones para salas especiais
-                            if (roomNumber === stairsLocation) {
-                                roomElement.classList.add('stairs');
-                                roomElement.textContent = '⤊';
-                            } else if (roomNumber === merchantRoom) {
-                                roomElement.classList.add('merchant');
-                                roomElement.textContent = '💰';
-                            } else if (rooms[roomNumber]?.type === 'boss') {
-                                roomElement.classList.add('boss');
-                                roomElement.textContent = '👑';
-                            } else {
-                                roomElement.textContent = '▪';
-                            }
-                        }
-                        
-                        miniMap.appendChild(roomElement);
-                    }
-                }
-            },
-            
-            // Check if current room has a door in specified direction - CORRIGIDO
-            hasDoor: function(direction) {
-                if (!rooms[currentRoom] || !rooms[currentRoom].doors) return false;
-                
-                const room = rooms[currentRoom];
-                let targetRoom;
-                
-                switch(direction) {
-                    case 'top': targetRoom = currentRoom - 5; break;
-                    case 'bottom': targetRoom = currentRoom + 5; break;
-                    case 'left': targetRoom = currentRoom - 1; break;
-                    case 'right': targetRoom = currentRoom + 1; break;
-                }
-                
-                // Verificar se o quarto alvo existe
-                return targetRoom >= 1 && targetRoom <= 25 && room.doors[direction];
-            },
-            
-            // Unlock all doors when room is cleared
-            unlockDoors: function() {
-                const directions = ['top', 'bottom', 'left', 'right'];
-                directions.forEach(direction => {
-                    const door = document.getElementById(`door-${direction}`);
-                    if (door.style.display !== 'none') {
-                        door.classList.remove('locked');
-                    }
-                });
-            },
-            
-            // Move to another room - CORRIGIDO
-            changeRoom: function(direction) {
-                if (!roomCleared && rooms[currentRoom]?.type !== 'merchant' && rooms[currentRoom]?.type !== 'stairs') return;
-                
-                // Fade to black
-                const transition = document.getElementById('room-transition');
-                transition.style.opacity = '1';
-                
-                setTimeout(() => {
-                    // Calculate new room based on direction
-                    let newRoom = currentRoom;
-                    
-                    switch(direction) {
-                        case 'top': newRoom -= 5; break;
-                        case 'bottom': newRoom += 5; break;
-                        case 'left': newRoom -= 1; break;
-                        case 'right': newRoom += 1; break;
-                    }
-                    
-                    // Validate room number
-                    if (newRoom >= 1 && newRoom <= 25) {
-                        currentRoom = newRoom;
-                        this.generateRoom();
-                        
-                        // Position player based on door entered
-                        this.positionPlayerFromDoor(direction);
-                    }
-                    
-                    // Fade back in
-                    setTimeout(() => {
-                        transition.style.opacity = '0';
-                    }, 300);
-                }, 500);
-            },
-            
-            // Position player based on which door they entered from
-            positionPlayerFromDoor: function(direction) {
-                const centerX = canvas.width / 2;
-                const centerY = canvas.height / 2;
-                
-                switch(direction) {
-                    case 'top':
-                        player.x = centerX;
-                        player.y = canvas.height - 100;
-                        break;
-                    case 'bottom':
-                        player.x = centerX;
-                        player.y = 100;
-                        break;
-                    case 'left':
-                        player.x = canvas.width - 100;
-                        player.y = centerY;
-                        break;
-                    case 'right':
-                        player.x = 100;
-                        player.y = centerY;
-                        break;
-                }
-            },
-            
-            // Render game
             render: function() {
                 // Clear canvas
                 ctx.fillStyle = '#0a0a0f';
@@ -1437,71 +582,48 @@ body {
                 this.drawRoom();
                 
                 // Draw items
-                this.drawItems();
+                items.forEach(item => {
+                    if (item.type === 'chest' || item.type === 'mimic') {
+                        drawSprite(item.sprite, item.x, item.y, 30);
+                    } else {
+                        // Draw simple pixel for other items
+                        ctx.fillStyle = item.color;
+                        ctx.fillRect(item.x - 5, item.y - 5, 10, 10);
+                    }
+                });
                 
                 // Draw enemies
-                this.drawEnemies();
+                enemies.forEach(enemy => {
+                    drawSprite(enemy.sprite, enemy.x, enemy.y, enemy.size);
+                });
                 
                 // Draw player
-                this.drawPlayer();
+                drawSprite(sprites.player, player.x, player.y, player.size);
                 
                 // Draw projectiles
-                this.drawProjectiles();
-                
-                // Draw particles
-                this.drawParticles();
-                
-                // Draw combat text
-                this.drawCombatTexts();
-                
-                // Draw NPCs and interactive elements
-                this.drawInteractiveElements();
+                projectiles.forEach(projectile => {
+                    ctx.fillStyle = projectile.color;
+                    ctx.fillRect(projectile.x - 2, projectile.y - 2, 4, 4);
+                });
             },
             
-            // Draw interactive elements like merchant and stairs
-            drawInteractiveElements: function() {
-                if (rooms[currentRoom]?.type === 'merchant') {
-                    this.drawMerchant();
-                } else if (rooms[currentRoom]?.type === 'stairs') {
-                    this.drawStairs();
-                }
+            drawRoom: function() {
+                // Simple pixel room
+                ctx.fillStyle = '#1a1a2e';
+                ctx.fillRect(50, 50, canvas.width - 100, canvas.height - 100);
+                
+                ctx.strokeStyle = '#2d2d4d';
+                ctx.lineWidth = 4;
+                ctx.strokeRect(50, 50, canvas.width - 100, canvas.height - 100);
+                
+                // Draw pixel torches
+                ctx.fillStyle = '#8b0000';
+                ctx.fillRect(70, 70, 6, 6);
+                ctx.fillRect(canvas.width - 76, 70, 6, 6);
+                ctx.fillRect(70, canvas.height - 76, 6, 6);
+                ctx.fillRect(canvas.width - 76, canvas.height - 76, 6, 6);
             },
             
-            // Draw merchant
-            drawMerchant: function() {
-                const merchant = rooms[currentRoom].merchant;
-                ctx.fillStyle = '#daa520';
-                ctx.beginPath();
-                ctx.arc(merchant.x, merchant.y, 20, 0, Math.PI * 2);
-                ctx.fill();
-                
-                ctx.fillStyle = '#ffffff';
-                ctx.font = '16px Arial';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText('💰', merchant.x, merchant.y);
-                
-                // Draw merchant text
-                ctx.fillStyle = '#daa520';
-                ctx.font = '14px Arial';
-                ctx.fillText('Mercador (E)', merchant.x, merchant.y - 30);
-            },
-            
-            // Draw stairs
-            drawStairs: function() {
-                const stairs = rooms[currentRoom].stairs;
-                ctx.fillStyle = '#daa520';
-                ctx.font = '24px Arial';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText('⤊', stairs.x, stairs.y);
-                
-                ctx.fillStyle = '#daa520';
-                ctx.font = '14px Arial';
-                ctx.fillText('Escadas (E)', stairs.x, stairs.y - 30);
-            },
-            
-            // Player update logic
             updatePlayer: function() {
                 // Movement
                 let moveX = 0, moveY = 0;
@@ -1511,147 +633,67 @@ body {
                 if (keys['a'] || keys['ArrowLeft']) moveX -= player.speed;
                 if (keys['d'] || keys['ArrowRight']) moveX += player.speed;
                 
-                // Normalize diagonal movement
-                if (moveX !== 0 && moveY !== 0) {
-                    moveX *= 0.707;
-                    moveY *= 0.707;
-                }
+                // Update position
+                player.x += moveX;
+                player.y += moveY;
                 
-                // Update position with collision detection
-                const newX = player.x + moveX;
-                const newY = player.y + moveY;
+                // Keep player in bounds
+                player.x = Math.max(60, Math.min(canvas.width - 60, player.x));
+                player.y = Math.max(60, Math.min(canvas.height - 60, player.y));
                 
-                if (!this.checkWallCollision(newX, player.y)) {
-                    player.x = newX;
-                }
-                if (!this.checkWallCollision(player.x, newY)) {
-                    player.y = newY;
-                }
-                
-                // Update player direction based on mouse
+                // Update direction
                 const dx = mouse.x - player.x;
                 const dy = mouse.y - player.y;
                 player.angle = Math.atan2(dy, dx);
                 
-                // Regenerate mana
-                if (player.mana < player.maxMana) {
-                    player.mana += 0.02;
-                    if (player.mana > player.maxMana) player.mana = player.maxMana;
-                }
-                
-                // Handle continuous attack when mouse is held down
+                // Attack
                 if (mouse.down && player.attackCooldown <= 0) {
                     this.playerAttack();
                 }
-
-                // Check for interactions
-                if (keys['e']) {
-                    this.checkInteractions();
-                    keys['e'] = false; // Prevent holding E
-                }
-            },
-            
-            // Check for interactions with NPCs and objects
-            checkInteractions: function() {
-                // Check merchant
-                if (rooms[currentRoom]?.type === 'merchant') {
-                    const merchant = rooms[currentRoom].merchant;
-                    const dx = player.x - merchant.x;
-                    const dy = player.y - merchant.y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-                    
-                    if (distance < 50) {
-                        this.openMerchant();
-                        return;
-                    }
-                }
                 
-                // Check stairs
-                if (rooms[currentRoom]?.type === 'stairs') {
-                    const stairs = rooms[currentRoom].stairs;
-                    const dx = player.x - stairs.x;
-                    const dy = player.y - stairs.y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-                    
-                    if (distance < 50) {
-                        this.nextFloor();
-                        return;
-                    }
+                if (player.attackCooldown > 0) {
+                    player.attackCooldown--;
                 }
             },
             
-            // Enemy update logic
+            playerAttack: function() {
+                const projectile = {
+                    x: player.x,
+                    y: player.y,
+                    vx: Math.cos(player.angle) * 8,
+                    vy: Math.sin(player.angle) * 8,
+                    damage: this.calculatePlayerDamage(),
+                    lifetime: 60,
+                    color: '#daa520'
+                };
+                
+                projectiles.push(projectile);
+                player.attackCooldown = player.attackSpeed;
+            },
+            
             updateEnemies: function() {
                 enemies.forEach((enemy, index) => {
                     if (enemy.health <= 0) {
-                        // Enemy died
-                        this.createParticles(enemy.x, enemy.y, 10, '#8b0000');
-                        this.addCombatText('+' + enemy.goldReward + ' ouro', enemy.x, enemy.y, '#daa520');
-                        
-                        player.gold += enemy.goldReward;
-                        player.exp += enemy.expReward;
-                        
-                        // Check for level up
-                        if (player.exp >= player.expToNextLevel) {
-                            player.level++;
-                            player.exp -= player.expToNextLevel;
-                            player.expToNextLevel = Math.floor(player.expToNextLevel * 1.5);
-                            player.skillPoints++;
-                            
-                            // Increase stats
-                            player.maxHealth += 10;
-                            player.health = player.maxHealth;
-                            player.maxMana += 5;
-                            player.mana = player.maxMana;
-                            player.damageMin += 1;
-                            player.damageMax += 2;
-                            
-                            this.addCombatText('Nível Up!', player.x, player.y - 30, '#00ff00');
+                        // Drop loot
+                        if (Math.random() < 0.3) {
+                            this.spawnLoot(enemy.x, enemy.y);
                         }
-                        
-                        // Remove enemy
                         enemies.splice(index, 1);
-                        
-                        // Spawn loot from boss
-                        if (enemy.type.includes('boss')) {
-                            this.spawnBossChest(enemy.x, enemy.y);
-                        } else {
-                            // Spawn regular loot (chance reduzida)
-                            if (Math.random() < 0.1) { // 10% chance instead of 30%
-                                this.spawnLoot(enemy.x, enemy.y);
-                            }
-                        }
-                        
                         return;
                     }
                     
-                    // Enemy AI
+                    // Simple AI
                     const dx = player.x - enemy.x;
                     const dy = player.y - enemy.y;
                     const distance = Math.sqrt(dx * dx + dy * dy);
                     
-                    if (distance < enemy.aggroRange) {
-                        // Move toward player
-                        if (distance > enemy.attackRange) {
-                            enemy.x += (dx / distance) * enemy.speed;
-                            enemy.y += (dy / distance) * enemy.speed;
-                        }
-                        
-                        // Attack if in range
-                        if (distance <= enemy.attackRange && enemy.attackCooldown <= 0) {
-                            this.enemyAttack(enemy);
-                            enemy.attackCooldown = enemy.attackSpeed;
-                        }
-                    }
-                    
-                    // Update attack cooldown
-                    if (enemy.attackCooldown > 0) {
-                        enemy.attackCooldown--;
+                    if (distance < 150) {
+                        enemy.x += (dx / distance) * enemy.speed;
+                        enemy.y += (dy / distance) * enemy.speed;
                     }
                 });
             },
             
-            // Projectile update logic
             updateProjectiles: function() {
                 for (let i = projectiles.length - 1; i >= 0; i--) {
                     const projectile = projectiles[i];
@@ -1659,1229 +701,291 @@ body {
                     projectile.y += projectile.vy;
                     projectile.lifetime--;
                     
-                    // Remove if lifetime expired or out of bounds
-                    if (projectile.lifetime <= 0 || 
-                        projectile.x < 0 || projectile.x > canvas.width || 
-                        projectile.y < 0 || projectile.y > canvas.height) {
+                    if (projectile.lifetime <= 0) {
                         projectiles.splice(i, 1);
                     }
                 }
             },
             
-            // Particle update logic
             updateParticles: function() {
-                for (let i = particles.length - 1; i >= 0; i--) {
-                    const particle = particles[i];
-                    particle.x += particle.vx;
-                    particle.y += particle.vy;
-                    particle.life--;
-                    particle.alpha = particle.life / particle.maxLife;
-                    
-                    if (particle.life <= 0) {
-                        particles.splice(i, 1);
-                    }
-                }
+                // Particle system would go here
             },
             
-            // Combat text update
             updateCombatTexts: function() {
-                for (let i = combatTexts.length - 1; i >= 0; i--) {
-                    const text = combatTexts[i];
-                    text.y -= 1;
-                    text.life--;
-                    text.alpha = text.life / text.maxLife;
-                    
-                    if (text.life <= 0) {
-                        combatTexts.splice(i, 1);
-                    }
-                }
+                // Combat text system would go here
             },
             
-            // Collision detection
             checkCollisions: function() {
-                // Player vs Enemy projectiles
+                // Projectile vs Enemy
                 for (let i = projectiles.length - 1; i >= 0; i--) {
-                    const projectile = projectiles[i];
-                    if (projectile.isEnemy) {
-                        const dx = player.x - projectile.x;
-                        const dy = player.y - projectile.y;
+                    for (let j = enemies.length - 1; j >= 0; j--) {
+                        const dx = projectiles[i].x - enemies[j].x;
+                        const dy = projectiles[i].y - enemies[j].y;
                         const distance = Math.sqrt(dx * dx + dy * dy);
                         
-                        if (distance < player.size + projectile.size) {
-                            // Player hit
-                            const damage = this.calculateDamage(projectile.damage, player.defense);
-                            player.health -= damage;
-                            
-                            this.addCombatText('-' + damage, player.x, player.y, '#ff0000');
-                            this.createParticles(player.x, player.y, 5, '#ff0000');
-                            
+                        if (distance < 20) {
+                            enemies[j].health -= projectiles[i].damage;
                             projectiles.splice(i, 1);
-                            
-                            if (player.health <= 0) {
-                                this.gameOver();
-                            }
-                        }
-                    }
-                }
-                
-                // Player projectiles vs Enemies
-                for (let i = projectiles.length - 1; i >= 0; i--) {
-                    const projectile = projectiles[i];
-                    if (!projectile.isEnemy) {
-                        for (let j = enemies.length - 1; j >= 0; j--) {
-                            const enemy = enemies[j];
-                            const dx = enemy.x - projectile.x;
-                            const dy = enemy.y - projectile.y;
-                            const distance = Math.sqrt(dx * dx + dy * dy);
-                            
-                            if (distance < enemy.size + projectile.size) {
-                                // Enemy hit
-                                let damage = this.calculateDamage(projectile.damage, enemy.defense);
-                                
-                                // Critical hit chance
-                                if (Math.random() < player.critChance) {
-                                    damage = Math.floor(damage * player.critMultiplier);
-                                    this.addCombatText('CRÍTICO!', enemy.x, enemy.y - 20, '#ff4500');
-                                }
-                                
-                                enemy.health -= damage;
-                                
-                                this.addCombatText('-' + damage, enemy.x, enemy.y, '#ff0000');
-                                this.createParticles(enemy.x, enemy.y, 3, '#ff0000');
-                                
-                                projectiles.splice(i, 1);
-                                break;
-                            }
+                            break;
                         }
                     }
                 }
                 
                 // Player vs Items
                 for (let i = items.length - 1; i >= 0; i--) {
-                    const item = items[i];
-                    const dx = player.x - item.x;
-                    const dy = player.y - item.y;
+                    const dx = player.x - items[i].x;
+                    const dy = player.y - items[i].y;
                     const distance = Math.sqrt(dx * dx + dy * dy);
                     
-                    if (distance < player.size + item.size) {
-                        // Collect item
-                        this.collectItem(item);
+                    if (distance < 25) {
+                        this.collectItem(items[i]);
                         items.splice(i, 1);
                     }
                 }
             },
             
-            // UI update
-            updateUI: function() {
-                // Update health and mana bars
-                document.getElementById('health-fill').style.width = (player.health / player.maxHealth * 100) + '%';
-                document.getElementById('mana-fill').style.width = (player.mana / player.maxMana * 100) + '%';
-                
-                // Update player stats
-                document.getElementById('player-level').textContent = player.level;
-                
-                // Calculate damage with equipment
-                let minDmg = player.damageMin;
-                let maxDmg = player.damageMax;
-                if (player.equippedWeapon) {
-                    minDmg += player.equippedWeapon.damage[0];
-                    maxDmg += player.equippedWeapon.damage[1];
-                }
-                
-                document.getElementById('player-damage').textContent = minDmg + '-' + maxDmg;
-                document.getElementById('player-defense').textContent = player.defense;
-                document.getElementById('player-gold').textContent = player.gold;
-                
-                // Update floor and room info
-                document.getElementById('floor-number').textContent = currentFloor;
-                document.getElementById('room-number').textContent = currentRoom;
-                
-                // Update enemy health bar if enemy is targeted
-                if (enemies.length > 0) {
-                    const enemy = enemies[0];
-                    document.getElementById('enemy-health').style.display = 'block';
-                    document.getElementById('enemy-name').textContent = enemy.name;
-                    document.getElementById('enemy-health-fill').style.width = (enemy.health / enemy.maxHealth * 100) + '%';
+            collectItem: function(item) {
+                if (item.type === 'chest') {
+                    // Spawn multiple items from chest
+                    for (let i = 0; i < 3; i++) {
+                        this.spawnRandomItem(item.x, item.y);
+                    }
+                } else if (item.type === 'mimic') {
+                    // Mimic attacks!
+                    enemies.push(this.createEnemy('mimic', item.x, item.y));
                 } else {
-                    document.getElementById('enemy-health').style.display = 'none';
-                }
-                
-                // Update skill cooldowns in UI
-                player.skills.forEach((skill, index) => {
-                    const skillElements = document.querySelectorAll('.skill');
-                    if (skillElements[index]) {
-                        if (skill.cooldown > 0) {
-                            skillElements[index].style.opacity = '0.5';
-                            skillElements[index].querySelector('.skill-cooldown').textContent = Math.ceil(skill.cooldown / 60) + 's';
-                        } else {
-                            skillElements[index].style.opacity = '1';
-                            skillElements[index].querySelector('.skill-cooldown').textContent = skill.manaCost + ' MP';
-                        }
-                    }
-                });
-
-                // Update equipped items
-                document.getElementById('equipped-weapon').textContent = player.equippedWeapon ? 
-                    player.equippedWeapon.icon + ' ' + player.equippedWeapon.name : '-';
-                document.getElementById('equipped-armor').textContent = player.equippedArmor ? 
-                    player.equippedArmor.icon + ' ' + player.equippedArmor.name : '-';
-            },
-            
-            // =============================================
-            // RENDERING FUNCTIONS
-            // =============================================
-            
-            drawRoom: function() {
-                // Draw floor
-                ctx.fillStyle = '#1a1a2e';
-                ctx.fillRect(50, 50, canvas.width - 100, canvas.height - 100);
-                
-                // Draw walls
-                ctx.strokeStyle = '#2d2d4d';
-                ctx.lineWidth = 4;
-                ctx.strokeRect(50, 50, canvas.width - 100, canvas.height - 100);
-                
-                // Draw room details based on type
-                if (rooms[currentRoom]?.type === 'merchant') {
-                    this.drawMerchantRoom();
-                } else if (rooms[currentRoom]?.type === 'stairs') {
-                    this.drawStairsRoom();
-                } else if (rooms[currentRoom]?.type === 'boss') {
-                    this.drawBossRoom();
-                } else {
-                    this.drawNormalRoom();
+                    this.addToInventory(item);
                 }
             },
             
-            drawNormalRoom: function() {
-                // Draw torches
-                ctx.fillStyle = '#8b0000';
-                ctx.beginPath();
-                ctx.arc(80, 80, 10, 0, Math.PI * 2);
-                ctx.fill();
-                
-                ctx.fillStyle = '#8b0000';
-                ctx.beginPath();
-                ctx.arc(canvas.width - 80, 80, 10, 0, Math.PI * 2);
-                ctx.fill();
-                
-                ctx.fillStyle = '#8b0000';
-                ctx.beginPath();
-                ctx.arc(80, canvas.height - 80, 10, 0, Math.PI * 2);
-                ctx.fill();
-                
-                ctx.fillStyle = '#8b0000';
-                ctx.beginPath();
-                ctx.arc(canvas.width - 80, canvas.height - 80, 10, 0, Math.PI * 2);
-                ctx.fill();
-            },
-            
-            drawMerchantRoom: function() {
-                // More elaborate merchant room
-                ctx.fillStyle = '#daa520';
-                ctx.font = '20px Arial';
-                ctx.textAlign = 'center';
-                ctx.fillText('🏪', canvas.width / 2, 100);
-                
-                this.drawNormalRoom();
-            },
-            
-            drawStairsRoom: function() {
-                // More elaborate stairs room
-                ctx.fillStyle = '#daa520';
-                ctx.font = '20px Arial';
-                ctx.textAlign = 'center';
-                ctx.fillText('🏰', canvas.width / 2, 100);
-                
-                this.drawNormalRoom();
-            },
-            
-            drawBossRoom: function() {
-                // Draw special boss room decorations
-                ctx.strokeStyle = '#8b0000';
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.arc(canvas.width / 2, canvas.height / 2, 100, 0, Math.PI * 2);
-                ctx.stroke();
-                
-                ctx.fillStyle = '#8b0000';
-                ctx.font = '16px Arial';
-                ctx.textAlign = 'center';
-                ctx.fillText('SALA DO CHEFE', canvas.width / 2, 40);
-            },
-            
-            drawPlayer: function() {
-                // Draw player body
-                ctx.fillStyle = player.color;
-                ctx.beginPath();
-                ctx.arc(player.x, player.y, player.size, 0, Math.PI * 2);
-                ctx.fill();
-                
-                // Draw player glow
-                ctx.shadowColor = player.color;
-                ctx.shadowBlur = 15;
-                ctx.fill();
-                ctx.shadowBlur = 0;
-                
-                // Draw player weapon direction
-                ctx.strokeStyle = '#daa520';
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.moveTo(player.x, player.y);
-                ctx.lineTo(
-                    player.x + Math.cos(player.angle) * player.size * 1.5,
-                    player.y + Math.sin(player.angle) * player.size * 1.5
-                );
-                ctx.stroke();
-                
-                // Draw player class icon
-                ctx.fillStyle = '#ffffff';
-                ctx.font = '16px Arial';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText(player.equippedWeapon?.icon || '⚔️', player.x, player.y);
-            },
-            
-            drawEnemies: function() {
-                enemies.forEach(enemy => {
-                    // Draw enemy body
-                    ctx.fillStyle = enemy.color;
-                    ctx.beginPath();
-                    ctx.arc(enemy.x, enemy.y, enemy.size, 0, Math.PI * 2);
-                    ctx.fill();
-                    
-                    // Draw enemy glow
-                    ctx.shadowColor = enemy.color;
-                    ctx.shadowBlur = 10;
-                    ctx.fill();
-                    ctx.shadowBlur = 0;
-                    
-                    // Draw enemy type icon
-                    ctx.fillStyle = '#ffffff';
-                    ctx.font = '14px Arial';
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'middle';
-                    
-                    let enemyIcon = '👹';
-                    if (enemy.type === 'skeleton') enemyIcon = '💀';
-                    else if (enemy.type === 'zombie') enemyIcon = '🧟';
-                    else if (enemy.type === 'ghost') enemyIcon = '👻';
-                    else if (enemy.type === 'wraith') enemyIcon = '🌫️';
-                    else if (enemy.type === 'vampire') enemyIcon = '🧛';
-                    else if (enemy.type === 'lich') enemyIcon = '☠️';
-                    else if (enemy.type === 'demon') enemyIcon = '😈';
-                    else if (enemy.type === 'ancient_dragon') enemyIcon = '🐉';
-                    else if (enemy.type === 'shadow_lord') enemyIcon = '👑';
-                    
-                    ctx.fillText(enemyIcon, enemy.x, enemy.y);
-                });
-            },
-            
-            drawItems: function() {
-                items.forEach(item => {
-                    // Draw item
-                    ctx.fillStyle = item.color;
-                    ctx.beginPath();
-                    ctx.arc(item.x, item.y, item.size, 0, Math.PI * 2);
-                    ctx.fill();
-                    
-                    // Draw item glow
-                    ctx.shadowColor = item.color;
-                    ctx.shadowBlur = 15;
-                    ctx.fill();
-                    ctx.shadowBlur = 0;
-                    
-                    // Draw item icon
-                    ctx.fillStyle = '#ffffff';
-                    ctx.font = '12px Arial';
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'middle';
-                    ctx.fillText(item.icon, item.x, item.y);
-                });
-            },
-            
-            drawProjectiles: function() {
-                projectiles.forEach(projectile => {
-                    ctx.fillStyle = projectile.color;
-                    ctx.beginPath();
-                    ctx.arc(projectile.x, projectile.y, projectile.size, 0, Math.PI * 2);
-                    ctx.fill();
-                    
-                    // Draw projectile trail
-                    ctx.shadowColor = projectile.color;
-                    ctx.shadowBlur = 10;
-                    ctx.fill();
-                    ctx.shadowBlur = 0;
-                });
-            },
-            
-            drawParticles: function() {
-                particles.forEach(particle => {
-                    ctx.globalAlpha = particle.alpha;
-                    ctx.fillStyle = particle.color;
-                    ctx.beginPath();
-                    ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.globalAlpha = 1;
-                });
-            },
-            
-            drawCombatTexts: function() {
-                combatTexts.forEach(text => {
-                    ctx.globalAlpha = text.alpha;
-                    ctx.fillStyle = text.color;
-                    ctx.font = 'bold 16px Arial';
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'middle';
-                    ctx.fillText(text.text, text.x, text.y);
-                    ctx.globalAlpha = 1;
-                });
-            },
-            
-            // =============================================
-            // GAME MECHANICS
-            // =============================================
-            
-            // Initialize a new game
-            initGame: function() {
-                // Reset game state
-                currentFloor = 1;
-                currentRoom = 13; // Start in the middle of 5x5 grid
-                enemies = [];
-                items = [];
-                projectiles = [];
-                particles = [];
-                combatTexts = [];
-                roomCleared = false;
-                visitedRooms = new Set([13]);
-                stairsLocation = null;
-                merchantRoom = null;
-                
-                // Generate first floor
-                this.generateFloor();
-                
-                // Start game loop
-                this.loop();
-            },
-            
-            // Generate a floor with rooms - CORRIGIDO para 5x5
-            generateFloor: function() {
-                rooms = [];
-                
-                // Generate random special rooms
-                const specialRooms = this.generateSpecialRooms();
-                stairsLocation = specialRooms.stairs;
-                merchantRoom = specialRooms.merchant;
-                const bossRoom = specialRooms.boss;
-                
-                // Generate 5x5 grid (25 rooms)
-                for (let i = 1; i <= 25; i++) {
-                    let roomType = 'normal';
-                    
-                    if (i === 13) roomType = 'start';
-                    else if (i === stairsLocation) roomType = 'stairs';
-                    else if (i === merchantRoom) roomType = 'merchant';
-                    else if (i === bossRoom) roomType = 'boss';
-                    
-                    const room = {
-                        type: roomType,
-                        enemies: [],
-                        cleared: i === 13, // Start room is cleared
-                        doors: this.generateDoors(i)
-                    };
-                    
-                    // Add specific content based on room type
-                    if (roomType === 'merchant') {
-                        room.merchant = {
-                            x: canvas.width / 2,
-                            y: canvas.height / 2,
-                            items: this.generateMerchantItems()
-                        };
-                        room.cleared = true;
-                    } else if (roomType === 'stairs') {
-                        room.stairs = {
-                            x: canvas.width / 2,
-                            y: canvas.height / 2
-                        };
-                        room.cleared = true;
-                    } else if (roomType === 'boss') {
-                        room.enemies.push(this.createBoss());
-                    } else if (roomType === 'normal' && Math.random() > 0.4) {
-                        // 60% chance of enemies in normal rooms
-                        const enemyCount = 2 + Math.floor(currentFloor / 2);
-                        for (let j = 0; j < enemyCount; j++) {
-                            room.enemies.push(this.createEnemy());
-                        }
-                    }
-                    
-                    rooms[i] = room;
-                }
-                
-                currentRoom = 13;
-                this.generateRoom();
-            },
-            
-            // Generate special rooms for 5x5 grid
-            generateSpecialRooms: function() {
-                const specialRooms = {
-                    stairs: null,
-                    merchant: null,
-                    boss: null
-                };
-                
-                // Generate unique room numbers (1-25, excluding start room 13)
-                const availableRooms = [];
-                for (let i = 1; i <= 25; i++) {
-                    if (i !== 13) availableRooms.push(i);
-                }
-                
-                // Shuffle and assign
-                this.shuffleArray(availableRooms);
-                specialRooms.stairs = availableRooms[0];
-                specialRooms.merchant = availableRooms[1];
-                specialRooms.boss = availableRooms[2];
-                
-                return specialRooms;
-            },
-            
-            // Shuffle array utility
-            shuffleArray: function(array) {
-                for (let i = array.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [array[i], array[j]] = [array[j], array[i]];
-                }
-            },
-            
-            // Generate doors for a room in 5x5 grid
-            generateDoors: function(roomNumber) {
-                const row = Math.floor((roomNumber - 1) / 5);
-                const col = (roomNumber - 1) % 5;
-                
-                return {
-                    top: row > 0,
-                    bottom: row < 4,
-                    left: col > 0,
-                    right: col < 4
-                };
-            },
-            
-            // Generate items for merchant
-            generateMerchantItems: function() {
-                const items = [];
-                const itemCount = 4;
-                
-                for (let i = 0; i < itemCount; i++) {
-                    let item;
-                    if (Math.random() < 0.7) { // 70% chance for weapons
-                        // Lower chance for rare items from merchant
-                        const rarityRoll = Math.random();
-                        let rarityIndex;
-                        if (rarityRoll < 0.6) rarityIndex = 0; // Common (60%)
-                        else if (rarityRoll < 0.9) rarityIndex = 1; // Uncommon (30%)
-                        else rarityIndex = 2; // Rare (10%)
-                        
-                        const weaponPool = weaponTypes.filter(w => 
-                            w.rarity === ['common', 'uncommon', 'rare', 'epic', 'legendary'][rarityIndex]
-                        );
-                        item = {...weaponPool[Math.floor(Math.random() * weaponPool.length)]};
-                    } else { // 30% chance for armor
-                        const rarityRoll = Math.random();
-                        let rarityIndex;
-                        if (rarityRoll < 0.6) rarityIndex = 0; // Common (60%)
-                        else if (rarityRoll < 0.9) rarityIndex = 1; // Uncommon (30%)
-                        else rarityIndex = 2; // Rare (10%)
-                        
-                        item = {...armorTypes[rarityIndex]};
-                    }
-                    
-                    item.price = this.calculateItemPrice(item);
-                    item.merchantItem = true;
-                    items.push(item);
-                }
-                
-                // Always add potions
-                items.push({
-                    name: 'Poção de Vida Grande',
-                    type: 'potion',
-                    health: 100,
-                    icon: '❤️',
-                    price: 50,
-                    merchantItem: true
-                });
-                
-                return items;
-            },
-            
-            // Calculate item price based on rarity
-            calculateItemPrice: function(item) {
-                const basePrice = 50;
-                const rarityMultiplier = {
-                    'common': 1,
-                    'uncommon': 3,
-                    'rare': 8,
-                    'epic': 20,
-                    'legendary': 50
-                };
-                return basePrice * rarityMultiplier[item.rarity];
-            },
-            
-            // Generate a room with enemies and items
-            generateRoom: function() {
-                // Clear previous room
-                enemies = [];
-                items = [];
-                roomCleared = rooms[currentRoom]?.cleared || false;
-                
-                // Add enemies from room definition
-                if (rooms[currentRoom]?.enemies) {
-                    enemies.push(...rooms[currentRoom].enemies);
-                }
-                
-                // Spawn some random items in normal rooms (chance reduzida)
-                if (rooms[currentRoom]?.type === 'normal' && Math.random() < 0.2) {
-                    this.spawnRandomItem();
-                }
-            },
-            
-            // Create a random enemy based on current floor
-            createEnemy: function() {
-                const availableEnemies = floorEnemies[currentFloor] || floorEnemies[1];
-                const enemyType = availableEnemies[Math.floor(Math.random() * availableEnemies.length)];
-                
-                const enemyDefinitions = {
-                    'skeleton': { name: 'Esqueleto', color: '#c0c0c0', health: 30, damage: 5, speed: 2, size: 20, expReward: 10, goldReward: 5 },
-                    'zombie': { name: 'Zumbi', color: '#2d5a27', health: 50, damage: 8, speed: 1, size: 24, expReward: 15, goldReward: 8 },
-                    'ghost': { name: 'Fantasma', color: '#7b68ee', health: 25, damage: 6, speed: 3, size: 18, expReward: 12, goldReward: 6 },
-                    'wraith': { name: 'Espectro', color: '#4b0082', health: 40, damage: 10, speed: 2.5, size: 22, expReward: 20, goldReward: 12 },
-                    'vampire': { name: 'Vampiro', color: '#8b0000', health: 60, damage: 12, speed: 2, size: 26, expReward: 25, goldReward: 15 },
-                    'lich': { name: 'Lich', color: '#2f4f4f', health: 80, damage: 15, speed: 1.5, size: 28, expReward: 35, goldReward: 20 },
-                    'demon': { name: 'Demônio', color: '#8b0000', health: 100, damage: 18, speed: 2, size: 30, expReward: 45, goldReward: 25 },
-                    'ancient_dragon': { name: 'Dragão Ancestral', color: '#dc143c', health: 200, damage: 25, speed: 1.5, size: 40, expReward: 100, goldReward: 50 },
-                    'shadow_lord': { name: 'Senhor das Sombras', color: '#000000', health: 150, damage: 22, speed: 2.2, size: 35, expReward: 80, goldReward: 40 }
-                };
-                
-                const baseEnemy = enemyDefinitions[enemyType];
-                const floorMultiplier = 1 + (currentFloor - 1) * 0.5;
-                
-                const enemy = {
-                    ...baseEnemy,
-                    type: enemyType,
-                    x: Math.random() * (canvas.width - 200) + 100,
-                    y: Math.random() * (canvas.height - 200) + 100,
-                    maxHealth: Math.floor(baseEnemy.health * floorMultiplier),
-                    health: Math.floor(baseEnemy.health * floorMultiplier),
-                    damage: Math.floor(baseEnemy.damage * floorMultiplier),
-                    defense: Math.floor(currentFloor / 2),
-                    aggroRange: 200,
-                    attackRange: 50,
-                    attackSpeed: 60,
-                    attackCooldown: 0,
-                    expReward: Math.floor(baseEnemy.expReward * floorMultiplier),
-                    goldReward: Math.floor(baseEnemy.goldReward * floorMultiplier)
-                };
-                
-                return enemy;
-            },
-            
-            // Create a boss enemy
-            createBoss: function() {
-                const bossInfo = floorBosses[currentFloor] || floorBosses[1];
-                
-                const bossDefinitions = {
-                    'lich': { name: 'Lich Senhor das Trevas', color: '#4b0082', health: 200, damage: 15, speed: 1.5, size: 40 },
-                    'vampire_lord': { name: 'Vampiro Ancestral', color: '#8b0000', health: 250, damage: 20, speed: 2, size: 38 },
-                    'skeleton_king': { name: 'Rei Esqueleto', color: '#daa520', health: 300, damage: 18, speed: 1, size: 45 },
-                    'abyssal_demon': { name: 'Demônio do Abismo', color: '#ff4500', health: 350, damage: 25, speed: 1.8, size: 42 },
-                    'ancient_dragon': { name: 'Dragão Ancestral', color: '#dc143c', health: 500, damage: 30, speed: 1.2, size: 50 }
-                };
-                
-                const baseBoss = bossDefinitions[bossInfo.type];
-                const floorMultiplier = 1 + (currentFloor - 1) * 0.8;
-                
-                const boss = {
-                    ...baseBoss,
-                    type: bossInfo.type,
-                    x: canvas.width / 2,
-                    y: canvas.height / 2,
-                    maxHealth: Math.floor(baseBoss.health * floorMultiplier),
-                    health: Math.floor(baseBoss.health * floorMultiplier),
-                    damage: Math.floor(baseBoss.damage * floorMultiplier),
-                    defense: 10 + currentFloor * 2,
-                    speed: baseBoss.speed,
-                    size: baseBoss.size,
-                    aggroRange: 300,
-                    attackRange: 70,
-                    attackSpeed: 90,
-                    attackCooldown: 0,
-                    expReward: 100 * currentFloor,
-                    goldReward: 50 * currentFloor
-                };
-                
-                return boss;
-            },
-            
-            // Enemy attack logic
-            enemyAttack: function(enemy) {
-                // Simple melee attack for now
-                const dx = player.x - enemy.x;
-                const dy = player.y - enemy.y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-                
-                if (distance <= enemy.attackRange) {
-                    const damage = this.calculateDamage(enemy.damage, player.defense);
-                    player.health -= damage;
-                    
-                    this.addCombatText('-' + damage, player.x, player.y, '#ff0000');
-                    this.createParticles(player.x, player.y, 5, '#ff0000');
-                    
-                    if (player.health <= 0) {
-                        this.gameOver();
-                    }
-                }
-            },
-            
-            // Player attack with weapon
-            playerAttack: function() {
-                if (player.attackCooldown > 0) return;
-                
-                // Create projectile based on equipped weapon type
-                let projectile;
-                const weaponType = player.equippedWeapon?.type || 'sword';
-                
-                if (weaponType === 'bow' || weaponType === 'staff') {
-                    // Ranged attack
-                    projectile = {
-                        x: player.x,
-                        y: player.y,
-                        vx: Math.cos(player.angle) * 8,
-                        vy: Math.sin(player.angle) * 8,
-                        size: weaponType === 'bow' ? 8 : 12,
-                        color: weaponType === 'bow' ? '#c0c0c0' : '#9370db',
-                        damage: this.calculatePlayerDamage(),
-                        lifetime: 60,
-                        isEnemy: false
-                    };
-                    
-                    if (weaponType === 'staff' && player.mana >= 10) {
-                        player.mana -= 10;
-                    } else if (weaponType === 'staff') {
-                        return; // Not enough mana
-                    }
-                } else {
-                    // Melee attack
-                    projectile = {
-                        x: player.x + Math.cos(player.angle) * player.size,
-                        y: player.y + Math.sin(player.angle) * player.size,
-                        vx: Math.cos(player.angle) * 15,
-                        vy: Math.sin(player.angle) * 15,
-                        size: 12,
-                        color: '#daa520',
-                        damage: this.calculatePlayerDamage(),
-                        lifetime: 10,
-                        isEnemy: false
-                    };
-                }
-                
-                projectiles.push(projectile);
-                player.attackCooldown = player.attackSpeed;
-                
-                // Create attack particles
-                this.createParticles(
-                    player.x + Math.cos(player.angle) * player.size,
-                    player.y + Math.sin(player.angle) * player.size,
-                    3,
-                    weaponType === 'bow' ? '#c0c0c0' : 
-                    weaponType === 'staff' ? '#9370db' : '#daa520'
-                );
-            },
-            
-            // Calculate player damage
-            calculatePlayerDamage: function() {
-                let baseDamage = Math.floor(Math.random() * (player.damageMax - player.damageMin + 1)) + player.damageMin;
-                
-                // Apply weapon damage if equipped
-                if (player.equippedWeapon) {
-                    const weapon = player.equippedWeapon;
-                    baseDamage += Math.floor(Math.random() * (weapon.damage[1] - weapon.damage[0] + 1)) + weapon.damage[0];
-                }
-                
-                return baseDamage;
-            },
-            
-            // Calculate damage with defense
-            calculateDamage: function(attack, defense) {
-                const damage = attack - defense * 0.5;
-                return Math.max(1, Math.floor(damage));
-            },
-            
-            // Check wall collision
-            checkWallCollision: function(x, y) {
-                const buffer = 10;
-                return x < 50 + buffer || x > canvas.width - 50 - buffer || 
-                       y < 50 + buffer || y > canvas.height - 50 - buffer;
-            },
-            
-            // Create particles for visual effects
-            createParticles: function(x, y, count, color) {
-                for (let i = 0; i < count; i++) {
-                    particles.push({
-                        x: x,
-                        y: y,
-                        vx: (Math.random() - 0.5) * 4,
-                        vy: (Math.random() - 0.5) * 4,
-                        size: Math.random() * 3 + 1,
-                        color: color,
-                        life: 30,
-                        maxLife: 30,
-                        alpha: 1
-                    });
-                }
-            },
-            
-            // Add combat text
-            addCombatText: function(text, x, y, color) {
-                combatTexts.push({
-                    text: text,
-                    x: x,
-                    y: y,
-                    color: color,
-                    life: 60,
-                    maxLife: 60,
-                    alpha: 1
-                });
-            },
-            
-            // Spawn loot item
             spawnLoot: function(x, y) {
-                const lootTypes = [
-                    { type: 'health', icon: '❤️', color: '#ff0000', name: 'Poção de Vida', health: 30 },
-                    { type: 'mana', icon: '🔵', color: '#1e90ff', name: 'Poção de Mana', mana: 30 },
-                    { type: 'gold', icon: '💰', color: '#daa520', name: 'Saco de Ouro', gold: 10 }
-                ];
-                
-                const loot = lootTypes[Math.floor(Math.random() * lootTypes.length)];
-                loot.x = x;
-                loot.y = y;
-                loot.size = 10;
-                
-                items.push(loot);
+                const lootTypes = ['weapon', 'armor', 'helmet', 'boots', 'ring', 'amulet'];
+                const lootType = lootTypes[Math.floor(Math.random() * lootTypes.length)];
+                this.spawnRandomItem(x, y, lootType);
             },
             
-            // Spawn random weapon or armor (chance de raridade ajustada)
-            spawnRandomItem: function() {
-                const itemTypes = ['weapon', 'armor'];
-                const itemType = itemTypes[Math.floor(Math.random() * itemTypes.length)];
+            spawnRandomItem: function(x, y, type = null) {
+                if (!type) {
+                    const types = ['weapon', 'armor', 'helmet', 'boots', 'ring', 'amulet', 'chest', 'mimic'];
+                    type = types[Math.floor(Math.random() * types.length)];
+                }
                 
                 let item;
-                if (itemType === 'weapon') {
-                    // Probabilidades ajustadas - itens raros são mais difíceis
-                    const rarityRoll = Math.random();
-                    let rarity;
-                    if (rarityRoll < 0.6) rarity = 'common'; // 60%
-                    else if (rarityRoll < 0.85) rarity = 'uncommon'; // 25%
-                    else if (rarityRoll < 0.95) rarity = 'rare'; // 10%
-                    else if (rarityRoll < 0.99) rarity = 'epic'; // 4%
-                    else rarity = 'legendary'; // 1%
-                    
-                    const weaponPool = weaponTypes.filter(w => w.rarity === rarity);
-                    item = {...weaponPool[Math.floor(Math.random() * weaponPool.length)]};
-                } else {
-                    // Probabilidades ajustadas para armaduras também
-                    const rarityRoll = Math.random();
-                    let rarityIndex;
-                    if (rarityRoll < 0.6) rarityIndex = 0; // Common (60%)
-                    else if (rarityRoll < 0.85) rarityIndex = 1; // Uncommon (25%)
-                    else if (rarityRoll < 0.95) rarityIndex = 2; // Rare (10%)
-                    else if (rarityRoll < 0.99) rarityIndex = 3; // Epic (4%)
-                    else rarityIndex = 4; // Legendary (1%)
-                    
-                    item = {...armorTypes[rarityIndex]};
+                const rarityRoll = Math.random();
+                let rarityIndex = 0;
+                if (rarityRoll < 0.6) rarityIndex = 0;
+                else if (rarityRoll < 0.85) rarityIndex = 1;
+                else if (rarityRoll < 0.95) rarityIndex = 2;
+                else if (rarityRoll < 0.99) rarityIndex = 3;
+                else rarityIndex = 4;
+                
+                switch(type) {
+                    case 'weapon':
+                        item = {...weaponTypes[rarityIndex]};
+                        break;
+                    case 'armor':
+                        item = {...armorTypes[rarityIndex]};
+                        break;
+                    case 'helmet':
+                        item = {...helmetTypes[rarityIndex]};
+                        break;
+                    case 'boots':
+                        item = {...bootTypes[rarityIndex]};
+                        break;
+                    case 'ring':
+                        item = {...ringTypes[rarityIndex]};
+                        break;
+                    case 'amulet':
+                        item = {...amuletTypes[rarityIndex]};
+                        break;
+                    case 'chest':
+                        item = {
+                            type: 'chest',
+                            name: 'Treasure Chest',
+                            sprite: sprites.chest,
+                            color: '#daa520'
+                        };
+                        break;
+                    case 'mimic':
+                        item = {
+                            type: 'mimic',
+                            name: 'Mimic Chest',
+                            sprite: sprites.mimic,
+                            color: '#dc143c'
+                        };
+                        break;
                 }
                 
-                item.x = Math.random() * (canvas.width - 150) + 75;
-                item.y = Math.random() * (canvas.height - 150) + 75;
-                item.size = 12;
-                item.type = itemType;
-                
+                item.x = x;
+                item.y = y;
                 items.push(item);
             },
             
-            // Spawn boss chest
-            spawnBossChest: function(x, y) {
-                const chest = {
-                    type: 'chest',
-                    icon: '🎁',
-                    color: '#daa520',
-                    name: 'Baú do Chefe',
-                    x: x,
-                    y: y,
-                    size: 15,
-                    items: this.generateBossLoot()
+            createEnemy: function(type, x, y) {
+                const enemy = {
+                    type: type,
+                    x: x || Math.random() * (canvas.width - 100) + 50,
+                    y: y || Math.random() * (canvas.height - 100) + 50,
+                    health: 30,
+                    maxHealth: 30,
+                    damage: 5,
+                    speed: 1,
+                    size: 20,
+                    sprite: sprites[type] || sprites.skeleton
                 };
-                
-                items.push(chest);
+                return enemy;
             },
             
-            // Generate loot from boss chest (chance de raridade ajustada)
-            generateBossLoot: function() {
-                const loot = [];
-                const itemCount = 2 + Math.floor(Math.random() * 2); // 2-3 items
-                
-                for (let i = 0; i < itemCount; i++) {
-                    const itemType = Math.random() < 0.7 ? 'weapon' : 'armor';
-                    let item;
-                    
-                    if (itemType === 'weapon') {
-                        // Boss tem chance maior de dropar itens raros, mas ainda balanceado
-                        const rarityRoll = Math.random();
-                        let rarity;
-                        if (rarityRoll < 0.3) rarity = 'rare'; // 30%
-                        else if (rarityRoll < 0.6) rarity = 'epic'; // 30%
-                        else if (rarityRoll < 0.85) rarity = 'legendary'; // 25%
-                        else rarity = 'uncommon'; // 15% (fallback)
-                        
-                        const weaponPool = weaponTypes.filter(w => w.rarity === rarity);
-                        item = {...weaponPool[Math.floor(Math.random() * weaponPool.length)]};
-                    } else {
-                        // Similar para armaduras
-                        const rarityRoll = Math.random();
-                        let rarityIndex;
-                        if (rarityRoll < 0.3) rarityIndex = 2; // Rare (30%)
-                        else if (rarityRoll < 0.6) rarityIndex = 3; // Epic (30%)
-                        else if (rarityRoll < 0.85) rarityIndex = 4; // Legendary (25%)
-                        else rarityIndex = 1; // Uncommon (15%)
-                        
-                        item = {...armorTypes[rarityIndex]};
-                    }
-                    
-                    item.type = itemType;
-                    loot.push(item);
+            calculatePlayerDamage: function() {
+                let damage = player.damageMin + Math.random() * (player.damageMax - player.damageMin);
+                if (player.equippedWeapon) {
+                    damage += player.equippedWeapon.damage[0] + 
+                             Math.random() * (player.equippedWeapon.damage[1] - player.equippedWeapon.damage[0]);
                 }
-                
-                return loot;
+                return Math.floor(damage);
             },
             
-            // Collect item
-            collectItem: function(item) {
-                if (item.type === 'health') {
-                    player.health = Math.min(player.maxHealth, player.health + item.health);
-                    this.addCombatText('+' + item.health + ' Vida', player.x, player.y, '#00ff00');
-                } else if (item.type === 'mana') {
-                    player.mana = Math.min(player.maxMana, player.mana + item.mana);
-                    this.addCombatText('+' + item.mana + ' Mana', player.x, player.y, '#1e90ff');
-                } else if (item.type === 'gold') {
-                    player.gold += item.gold;
-                    this.addCombatText('+' + item.gold + ' Ouro', player.x, player.y, '#daa520');
-                } else if (item.type === 'chest') {
-                    // Open chest
-                    item.items.forEach(chestItem => {
-                        this.addToInventory(chestItem);
-                    });
-                    this.addCombatText('Baú Aberto!', player.x, player.y, '#daa520');
-                } else if (item.type === 'weapon' || item.type === 'armor') {
-                    this.addToInventory(item);
-                }
-                
-                this.createParticles(item.x, item.y, 5, item.color);
-            },
-            
-            // Add item to inventory
             addToInventory: function(item) {
-                if (player.inventory.length < 12) {
+                if (player.inventory.length < 16) {
                     player.inventory.push(item);
                     this.updateInventoryUI();
-                    this.addCombatText(item.name + ' Coletado!', player.x, player.y, '#daa520');
                 }
             },
             
-            // Update inventory UI
             updateInventoryUI: function() {
                 const inventorySlots = document.getElementById('inventory-slots');
                 inventorySlots.innerHTML = '';
                 
                 player.inventory.forEach((item, index) => {
                     const slot = document.createElement('div');
-                    slot.className = `inventory-slot item-rarity-${item.rarity || 'common'}`;
-                    slot.textContent = item.icon;
-                    slot.dataset.index = index;
+                    slot.className = 'inventory-slot';
+                    slot.textContent = item.name.charAt(0);
+                    slot.title = item.name;
                     
-                    // Add tooltip
-                    slot.addEventListener('mouseenter', (e) => {
-                        this.showTooltip(e, item);
-                    });
-                    slot.addEventListener('mouseleave', () => {
-                        this.hideTooltip();
-                    });
-                    
-                    // Add click event for equipping
-                    slot.addEventListener('click', () => {
-                        this.equipItem(index);
+                    slot.addEventListener('click', (e) => {
+                        if (e.altKey) {
+                            // Delete item on Alt+Click
+                            player.inventory.splice(index, 1);
+                            this.updateInventoryUI();
+                        } else {
+                            this.equipItem(index);
+                        }
                     });
                     
                     inventorySlots.appendChild(slot);
                 });
                 
-                // Fill remaining slots
-                for (let i = player.inventory.length; i < 12; i++) {
+                // Fill empty slots
+                for (let i = player.inventory.length; i < 16; i++) {
                     const slot = document.createElement('div');
                     slot.className = 'inventory-slot';
                     inventorySlots.appendChild(slot);
                 }
             },
             
-            // Equip item
-            equipItem: function(inventoryIndex) {
-                const item = player.inventory[inventoryIndex];
+            equipItem: function(index) {
+                const item = player.inventory[index];
+                const slotType = item.slot;
                 
-                if (item.type === 'weapon') {
-                    // Unequip current weapon
-                    if (player.equippedWeapon) {
-                        player.inventory.push(player.equippedWeapon);
-                    }
-                    player.equippedWeapon = item;
-                    player.inventory.splice(inventoryIndex, 1);
-                    
-                    // Update attack speed based on weapon type
-                    if (item.type === 'bow' || item.type === 'staff') {
-                        player.attackSpeed = 20; // Faster for ranged
-                    } else {
-                        player.attackSpeed = 25; // Slower for melee
-                    }
-                } else if (item.type === 'armor') {
-                    // Unequip current armor
-                    if (player.equippedArmor) {
-                        player.inventory.push(player.equippedArmor);
-                    }
-                    player.equippedArmor = item;
-                    player.defense = 5 + (player.equippedArmor ? player.equippedArmor.defense : 0);
-                    player.inventory.splice(inventoryIndex, 1);
+                // Unequip current item in slot
+                if (player['equipped' + slotType.charAt(0).toUpperCase() + slotType.slice(1)]) {
+                    player.inventory.push(player['equipped' + slotType.charAt(0).toUpperCase() + slotType.slice(1)]);
                 }
+                
+                // Equip new item
+                player['equipped' + slotType.charAt(0).toUpperCase() + slotType.slice(1)] = item;
+                player.inventory.splice(index, 1);
+                
+                // Update stats
+                this.updatePlayerStats();
+                this.updateInventoryUI();
+                this.updateEquipmentUI();
+            },
+            
+            updatePlayerStats: function() {
+                // Recalculate player stats based on equipment
+                player.defense = 5;
+                player.speed = 4;
+                
+                if (player.equippedArmor) player.defense += player.equippedArmor.defense;
+                if (player.equippedHelmet) player.defense += player.equippedHelmet.defense;
+                if (player.equippedBoots) {
+                    player.defense += (player.equippedBoots.defense || 0);
+                    player.speed += (player.equippedBoots.speed || 0);
+                }
+                if (player.equippedRing) {
+                    player.damageMin += player.equippedRing.damage[0];
+                    player.damageMax += player.equippedRing.damage[1];
+                }
+                if (player.equippedAmulet) {
+                    player.maxHealth += player.equippedAmulet.health;
+                }
+            },
+            
+            updateEquipmentUI: function() {
+                const slots = ['weapon', 'armor', 'helmet', 'boots', 'ring', 'amulet'];
+                slots.forEach(slot => {
+                    const equipped = player['equipped' + slot.charAt(0).toUpperCase() + slot.slice(1)];
+                    document.getElementById('equipped-' + slot).textContent = equipped ? equipped.name : '-';
+                });
+            },
+            
+            updateUI: function() {
+                document.getElementById('health-fill').style.width = (player.health / player.maxHealth * 100) + '%';
+                document.getElementById('mana-fill').style.width = (player.mana / player.maxMana * 100) + '%';
+                document.getElementById('player-level').textContent = player.level;
+                document.getElementById('player-damage').textContent = player.damageMin + '-' + player.damageMax;
+                document.getElementById('player-defense').textContent = player.defense;
+                document.getElementById('player-gold').textContent = player.gold;
+            },
+            
+            initGame: function() {
+                // Reset game state
+                player = {
+                    x: canvas.width / 2,
+                    y: canvas.height / 2,
+                    size: 20,
+                    speed: 4,
+                    health: 100,
+                    maxHealth: 100,
+                    mana: 100,
+                    maxMana: 100,
+                    damageMin: 8,
+                    damageMax: 12,
+                    defense: 5,
+                    level: 1,
+                    gold: 0,
+                    attackCooldown: 0,
+                    attackSpeed: 20,
+                    inventory: [],
+                    equippedWeapon: null,
+                    equippedArmor: null,
+                    equippedHelmet: null,
+                    equippedBoots: null,
+                    equippedRing: null,
+                    equippedAmulet: null
+                };
+                
+                enemies = [
+                    this.createEnemy('skeleton'),
+                    this.createEnemy('zombie')
+                ];
+                
+                items = [
+                    { type: 'chest', x: 200, y: 200, name: 'Treasure Chest', sprite: sprites.chest, color: '#daa520' }
+                ];
+                
+                projectiles = [];
                 
                 this.updateInventoryUI();
-            },
-            
-            // Show tooltip
-            showTooltip: function(event, item) {
-                const tooltip = document.getElementById('tooltip');
-                let html = `<div class="tooltip-name tooltip-rarity-${item.rarity || 'common'}">${item.name}</div>`;
-                
-                if (item.type === 'weapon') {
-                    html += `<div class="tooltip-desc">Arma ${item.rarity ? `(${item.rarity})` : ''}</div>`;
-                    html += `<div class="tooltip-stats">Dano: ${item.damage[0]}-${item.damage[1]}</div>`;
-                    html += `<div class="tooltip-stats">Tipo: ${item.type}</div>`;
-                } else if (item.type === 'armor') {
-                    html += `<div class="tooltip-desc">Armadura ${item.rarity ? `(${item.rarity})` : ''}</div>`;
-                    html += `<div class="tooltip-stats">Defesa: +${item.defense}</div>`;
-                } else if (item.merchantItem) {
-                    html += `<div class="tooltip-stats">Preço: ${item.price} ouro</div>`;
-                }
-                
-                tooltip.innerHTML = html;
-                tooltip.style.display = 'block';
-                tooltip.style.left = (event.pageX + 10) + 'px';
-                tooltip.style.top = (event.pageY + 10) + 'px';
-            },
-            
-            // Hide tooltip
-            hideTooltip: function() {
-                document.getElementById('tooltip').style.display = 'none';
-            },
-            
-            // Open merchant - CORRIGIDO
-            openMerchant: function() {
-                const merchant = document.getElementById('merchant');
-                const merchantItems = document.getElementById('merchant-items');
-                const merchantGold = document.getElementById('merchant-gold');
-                
-                merchantGold.textContent = player.gold;
-                merchantItems.innerHTML = '';
-                
-                if (rooms[currentRoom]?.merchant?.items) {
-                    rooms[currentRoom].merchant.items.forEach((item, index) => {
-                        const itemElement = document.createElement('div');
-                        itemElement.className = `merchant-item item-rarity-${item.rarity || 'common'}`;
-                        itemElement.innerHTML = `
-                            <div style="font-size: 20px;">${item.icon}</div>
-                            <div style="font-size: 10px; margin: 5px 0;">${item.name}</div>
-                            <div style="font-size: 9px; color: #daa520;">${item.price} ouro</div>
-                        `;
-                        
-                        itemElement.addEventListener('click', () => {
-                            this.buyItem(index);
-                        });
-                        
-                        itemElement.addEventListener('mouseenter', (e) => {
-                            this.showTooltip(e, item);
-                        });
-                        itemElement.addEventListener('mouseleave', () => {
-                            this.hideTooltip();
-                        });
-                        
-                        merchantItems.appendChild(itemElement);
-                    });
-                    
-                    merchant.style.display = 'block';
-                }
-            },
-            
-            // Buy item from merchant
-            buyItem: function(itemIndex) {
-                const item = rooms[currentRoom].merchant.items[itemIndex];
-                
-                if (player.gold >= item.price) {
-                    player.gold -= item.price;
-                    this.addToInventory({...item});
-                    rooms[currentRoom].merchant.items.splice(itemIndex, 1);
-                    this.openMerchant(); // Refresh merchant
-                } else {
-                    this.addCombatText('Ouro Insuficiente!', player.x, player.y, '#ff0000');
-                }
-            },
-            
-            // Close merchant
-            closeMerchant: function() {
-                document.getElementById('merchant').style.display = 'none';
-            },
-            
-            // Move to next floor - CORRIGIDO
-            nextFloor: function() {
-                currentFloor++;
-                if (currentFloor > 5) {
-                    // Game completion
-                    this.gameComplete();
-                    return;
-                }
-                
-                // Heal player
-                player.health = player.maxHealth;
-                player.mana = player.maxMana;
-                
-                // Generate new floor
-                this.generateFloor();
-                
-                this.addCombatText('Andar ' + currentFloor + '!', player.x, player.y, '#00ff00');
-            },
-            
-            // Game over
-            gameOver: function() {
-                gameState = 'gameOver';
-                
-                // Show game over screen
-                document.querySelector('.game-over').style.display = 'flex';
-                
-                // Update game over stats
-                document.getElementById('game-over-stats').innerHTML = `
-                    <div>Você alcançou o nível ${player.level}</div>
-                    <div>E chegou ao andar ${currentFloor} da masmorra</div>
-                    <div>Coletou ${player.gold} peças de ouro</div>
-                `;
-            },
-            
-            // Game complete
-            gameComplete: function() {
-                // Implement game completion logic
-                alert('Parabéns! Você completou ShadowCrypt!');
-                this.gameOver();
-            },
-            
-            // Use player skill - CORRIGIDO
-            useSkill: function(skillIndex) {
-                const skill = player.skills[skillIndex];
-                
-                if (skill.cooldown > 0 || player.mana < skill.manaCost) {
-                    return;
-                }
-                
-                player.mana -= skill.manaCost;
-                skill.cooldown = skill.cooldownTime;
-                
-                // Execute skill effect
-                if (skill.name === 'Investida') {
-                    // Charge attack
-                    player.x += Math.cos(player.angle) * 100;
-                    player.y += Math.sin(player.angle) * 100;
-                    
-                    // Damage enemies in path
-                    enemies.forEach(enemy => {
-                        const dx = enemy.x - player.x;
-                        const dy = enemy.y - player.y;
-                        const distance = Math.sqrt(dx * dx + dy * dy);
-                        
-                        if (distance < 60) {
-                            const damage = this.calculatePlayerDamage() * 2;
-                            enemy.health -= damage;
-                            this.addCombatText('-' + damage, enemy.x, enemy.y, '#ff0000');
-                        }
-                    });
-                    
-                    this.createParticles(player.x, player.y, 20, '#daa520');
-                    
-                } else if (skill.name === 'Ataque Duplo') {
-                    // Double attack
-                    for (let i = 0; i < 2; i++) {
-                        this.playerAttack();
-                    }
-                    player.attackCooldown = 0; // Reset cooldown to allow immediate attack
-                    
-                } else if (skill.name === 'Cura Divina') {
-                    // Healing skill
-                    const healAmount = 50;
-                    player.health = Math.min(player.maxHealth, player.health + healAmount);
-                    this.addCombatText('+' + healAmount + ' Vida', player.x, player.y, '#00ff00');
-                    this.createParticles(player.x, player.y, 15, '#00ff00');
-                }
+                this.updateEquipmentUI();
+                this.loop();
             }
         };
-        
-        // =============================================
-        // INITIALIZATION & EVENT HANDLERS
-        // =============================================
-        
-        // Initialize the game when page loads
+
+        // Event Listeners
         window.addEventListener('load', function() {
-            // Set up event listeners
-            setupEventListeners();
-            
-            // Set up initial UI
-            setupUI();
-            
-            // Create default player
-            createDefaultPlayer();
-        });
-        
-        // Set up game event listeners
-        function setupEventListeners() {
-            // Keyboard input
-            window.addEventListener('keydown', function(e) {
-                keys[e.key] = true;
-                
-                // Space bar for attack
-                if (e.key === ' ' && gameState === 'playing') {
-                    game.playerAttack();
-                }
-                
-                // Number keys for skills
-                if (e.key >= '1' && e.key <= '3' && gameState === 'playing') {
-                    game.useSkill(parseInt(e.key) - 1);
-                }
-                
-                // E for interactions
-                if (e.key === 'e' && gameState === 'playing') {
-                    // Mark E as pressed, will be handled in update
-                    keys['e'] = true;
-                }
-                
-                // P to pause
-                if (e.key === 'p' && gameState === 'playing') {
-                    // Pause functionality would go here
-                }
-            });
-            
-            window.addEventListener('keyup', function(e) {
-                keys[e.key] = false;
-            });
-            
-            // Mouse input
+            // Mouse events
             canvas.addEventListener('mousemove', function(e) {
                 const rect = canvas.getBoundingClientRect();
                 mouse.x = (e.clientX - rect.left) * (canvas.width / rect.width);
@@ -2890,136 +994,42 @@ body {
             
             canvas.addEventListener('mousedown', function() {
                 mouse.down = true;
-                if (gameState === 'playing') {
-                    game.playerAttack();
-                }
             });
             
             canvas.addEventListener('mouseup', function() {
                 mouse.down = false;
             });
             
-            // Door click events
-            document.querySelectorAll('.door').forEach(door => {
-                door.addEventListener('click', function() {
-                    if (!this.classList.contains('locked')) {
-                        const direction = this.dataset.direction;
-                        game.changeRoom(direction);
-                    }
-                });
+            // Keyboard events
+            window.addEventListener('keydown', function(e) {
+                keys[e.key] = true;
             });
             
-            // Merchant close button
-            document.getElementById('close-merchant').addEventListener('click', function() {
-                game.closeMerchant();
+            window.addEventListener('keyup', function(e) {
+                keys[e.key] = false;
             });
             
-            // UI button events
+            // UI events
             document.getElementById('start-btn').addEventListener('click', function() {
                 document.querySelector('.start-screen').style.display = 'none';
                 gameState = 'playing';
                 game.initGame();
             });
             
-            // Restart game
             document.getElementById('restart-btn').addEventListener('click', function() {
                 document.querySelector('.game-over').style.display = 'none';
                 gameState = 'playing';
                 game.initGame();
             });
-        }
-        
-        // Set up initial UI state
-        function setupUI() {
-            // Create inventory slots
+            
+            // Create initial inventory slots
             const inventorySlots = document.getElementById('inventory-slots');
-            for (let i = 0; i < 12; i++) {
+            for (let i = 0; i < 16; i++) {
                 const slot = document.createElement('div');
                 slot.className = 'inventory-slot';
-                slot.textContent = '';
                 inventorySlots.appendChild(slot);
             }
-            
-            // Set up initial quests
-            const questList = document.getElementById('quest-list');
-            const quests = [
-                { text: 'Explore a masmorra', completed: false },
-                { text: 'Encontre as escadas para o próximo andar', completed: false },
-                { text: 'Derrote o Lich Senhor das Trevas', completed: false }
-            ];
-            
-            quests.forEach(quest => {
-                const questItem = document.createElement('div');
-                questItem.className = 'quest-item';
-                questItem.textContent = quest.text;
-                questList.appendChild(questItem);
-            });
-        }
-        
-        // Create default player (sem classe específica)
-        function createDefaultPlayer() {
-            player = {
-                // Stats básicos
-                x: canvas.width / 2,
-                y: canvas.height / 2,
-                size: 20,
-                speed: 4,
-                color: '#4a4a6a',
-                health: 100,
-                maxHealth: 100,
-                mana: 80,
-                maxMana: 80,
-                damageMin: 8,
-                damageMax: 12,
-                defense: 5,
-                critChance: 0.05,
-                critMultiplier: 1.5,
-                attackSpeed: 25,
-                attackCooldown: 0,
-                
-                // Sistema de progressão
-                level: 1,
-                exp: 0,
-                expToNextLevel: 100,
-                skillPoints: 0,
-                gold: 50,
-                
-                // Inventário e equipamentos
-                inventory: [],
-                equippedWeapon: null,
-                equippedArmor: null,
-                
-                // Habilidades universais
-                skills: [
-                    { name: 'Investida', cooldown: 0, cooldownTime: 180, manaCost: 20 },
-                    { name: 'Ataque Duplo', cooldown: 0, cooldownTime: 120, manaCost: 15 },
-                    { name: 'Cura Divina', cooldown: 0, cooldownTime: 300, manaCost: 30 }
-                ]
-            };
-            
-            // Adicionar arma inicial
-            const startingWeapon = {...weaponTypes[0]}; // Espada Curta
-            startingWeapon.type = 'weapon';
-            player.inventory.push(startingWeapon);
-            game.equipItem(0);
-            
-            // Set up skills UI
-            const skillSlots = document.getElementById('skill-slots');
-            skillSlots.innerHTML = '';
-            
-            player.skills.forEach((skill, index) => {
-                const skillElement = document.createElement('div');
-                skillElement.className = 'skill';
-                skillElement.innerHTML = `
-                    ${skill.name}
-                    <span class="skill-cooldown">${skill.manaCost} MP</span>
-                `;
-                skillElement.addEventListener('click', function() {
-                    game.useSkill(index);
-                });
-                skillSlots.appendChild(skillElement);
-            });
-        }
+        });
     </script>
 </body>
 </html>
