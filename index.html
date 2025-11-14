@@ -438,7 +438,7 @@
 
     <script>
         // =============================================
-        // PIXEL ART GAME ENGINE - CORRIGIDO E MELHORADO
+        // PIXEL ART GAME ENGINE - COMPLETAMENTE CORRIGIDO
         // =============================================
         
         const canvas = document.getElementById('game-canvas');
@@ -461,229 +461,119 @@
         let merchantRoom = null;
         let npcs = [];
 
-        // Sprites MUITO MELHORADOS 16x16 pixels
+        // Sprites SIMPLES E FUNCIONAIS 8x8 pixels
         const sprites = {
-            // Player MUITO mais detalhado
             player: {
-                down: [
-                    [0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0],
-                    [0,0,0,1,2,2,2,2,2,2,1,0,0,0,0,0],
-                    [0,0,1,2,2,3,3,3,3,2,2,1,0,0,0,0],
-                    [0,1,2,2,3,3,3,3,3,3,2,2,1,0,0,0],
-                    [0,1,2,3,3,4,4,4,4,3,3,2,1,0,0,0],
-                    [0,1,2,3,4,4,4,4,4,4,3,2,1,0,0,0],
-                    [0,0,1,2,3,3,3,3,3,3,2,1,0,0,0,0],
-                    [0,0,1,2,2,2,2,2,2,2,2,1,0,0,0,0],
-                    [0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0],
-                    [0,0,1,2,2,1,1,1,1,2,2,1,0,0,0,0],
-                    [0,1,2,2,2,2,1,1,2,2,2,2,1,0,0,0],
-                    [0,1,2,2,2,2,1,1,2,2,2,2,1,0,0,0],
-                    [0,1,2,2,2,2,1,1,2,2,2,2,1,0,0,0],
-                    [0,0,1,2,2,1,0,0,1,2,2,1,0,0,0,0],
-                    [0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,0],
-                    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+                body: [
+                    [0,0,1,1,1,1,0,0],
+                    [0,1,2,2,2,2,1,0],
+                    [0,1,2,3,3,2,1,0],
+                    [0,1,2,2,2,2,1,0],
+                    [0,0,1,1,1,1,0,0],
+                    [0,1,0,1,1,0,1,0],
+                    [0,1,0,1,1,0,1,0],
+                    [0,0,1,0,0,1,0,0]
                 ],
-                up: [
-                    [0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0],
-                    [0,0,0,1,2,2,2,2,2,2,1,0,0,0,0,0],
-                    [0,0,1,2,2,3,3,3,3,2,2,1,0,0,0,0],
-                    [0,1,2,2,3,3,3,3,3,3,2,2,1,0,0,0],
-                    [0,1,2,3,3,4,4,4,4,3,3,2,1,0,0,0],
-                    [0,1,2,3,4,4,4,4,4,4,3,2,1,0,0,0],
-                    [0,0,1,2,3,3,3,3,3,3,2,1,0,0,0,0],
-                    [0,0,1,2,2,2,2,2,2,2,2,1,0,0,0,0],
-                    [0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0],
-                    [0,0,0,1,2,2,1,1,2,2,1,0,0,0,0,0],
-                    [0,0,1,2,2,2,1,1,2,2,2,1,0,0,0,0],
-                    [0,0,1,2,2,2,1,1,2,2,2,1,0,0,0,0],
-                    [0,0,1,2,2,2,1,1,2,2,2,1,0,0,0,0],
-                    [0,0,0,1,2,1,0,0,1,2,1,0,0,0,0,0],
-                    [0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0],
-                    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-                ],
-                left: [
-                    [0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0],
-                    [0,0,0,0,1,1,2,2,2,2,1,0,0,0,0,0],
-                    [0,0,0,1,2,2,2,3,3,2,2,1,0,0,0,0],
-                    [0,0,1,2,2,3,3,3,3,3,2,2,1,0,0,0],
-                    [0,1,2,2,3,3,4,4,4,3,3,2,2,1,0,0],
-                    [0,1,2,3,3,4,4,4,4,4,3,3,2,1,0,0],
-                    [0,0,1,2,3,3,3,3,3,3,3,2,1,0,0,0],
-                    [0,0,1,2,2,2,2,2,2,2,2,2,1,0,0,0],
-                    [0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0],
-                    [0,0,1,2,2,1,1,1,1,2,2,1,0,0,0,0],
-                    [0,1,2,2,2,2,1,1,2,2,2,2,1,0,0,0],
-                    [0,1,2,2,2,2,1,1,2,2,2,2,1,0,0,0],
-                    [0,1,2,2,2,2,1,1,2,2,2,2,1,0,0,0],
-                    [0,0,1,2,2,1,0,0,1,2,2,1,0,0,0,0],
-                    [0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,0],
-                    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-                ],
-                right: [
-                    [0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0],
-                    [0,0,0,0,0,1,2,2,2,2,1,1,0,0,0,0],
-                    [0,0,0,0,1,2,2,3,3,2,2,2,1,0,0,0],
-                    [0,0,0,1,2,2,3,3,3,3,3,2,2,1,0,0],
-                    [0,0,1,2,2,3,3,4,4,4,3,3,2,2,1,0],
-                    [0,0,1,2,3,3,4,4,4,4,4,3,3,2,1,0],
-                    [0,0,0,1,2,3,3,3,3,3,3,3,2,1,0,0],
-                    [0,0,0,1,2,2,2,2,2,2,2,2,2,1,0,0],
-                    [0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0],
-                    [0,0,0,0,1,2,2,1,1,1,1,2,2,1,0,0],
-                    [0,0,0,1,2,2,2,2,1,1,2,2,2,2,1,0],
-                    [0,0,0,1,2,2,2,2,1,1,2,2,2,2,1,0],
-                    [0,0,0,1,2,2,2,2,1,1,2,2,2,2,1,0],
-                    [0,0,0,0,1,2,2,1,0,0,1,2,2,1,0,0],
-                    [0,0,0,0,0,1,1,0,0,0,0,1,1,0,0,0],
-                    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-                ],
-                colors: ['#000000', '#4a4a6a', '#6a6a8a', '#8a8aaa', '#2a2a4a']
+                colors: ['#000000', '#4a4a6a', '#6a6a8a']
             },
 
-            // Inimigos MUITO mais detalhados
             skeleton: {
                 body: [
-                    [0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0],
-                    [0,0,0,0,1,2,2,2,2,2,2,1,0,0,0,0],
-                    [0,0,0,1,2,2,3,3,3,3,2,2,1,0,0,0],
-                    [0,0,1,2,2,3,3,3,3,3,3,2,2,1,0,0],
-                    [0,1,2,2,3,3,4,4,4,4,3,3,2,2,1,0],
-                    [0,1,2,3,3,4,4,4,4,4,4,3,3,2,1,0],
-                    [0,1,2,3,3,4,4,4,4,4,4,3,3,2,1,0],
-                    [0,1,2,2,3,3,4,4,4,4,3,3,2,2,1,0],
-                    [0,0,1,2,2,3,3,3,3,3,3,2,2,1,0,0],
-                    [0,0,1,2,2,2,2,2,2,2,2,2,2,1,0,0],
-                    [0,0,0,1,2,2,1,1,1,1,2,2,1,0,0,0],
-                    [0,0,1,2,2,2,1,1,1,1,2,2,2,1,0,0],
-                    [0,1,2,2,2,2,1,1,1,1,2,2,2,2,1,0],
-                    [0,1,2,2,2,2,1,1,1,1,2,2,2,2,1,0],
-                    [0,0,1,2,2,1,0,0,0,0,1,2,2,1,0,0],
-                    [0,0,0,1,1,0,0,0,0,0,0,1,1,0,0,0]
+                    [0,0,1,1,1,1,0,0],
+                    [0,1,2,2,2,2,1,0],
+                    [0,1,2,3,3,2,1,0],
+                    [0,1,2,2,2,2,1,0],
+                    [0,0,1,1,1,1,0,0],
+                    [0,0,1,0,0,1,0,0],
+                    [0,1,0,1,1,0,1,0],
+                    [1,0,0,0,0,0,0,1]
                 ],
-                colors: ['#000000', '#c0c0c0', '#ffffff', '#2a2a2a', '#e0e0e0']
+                colors: ['#000000', '#c0c0c0', '#ffffff']
             },
 
             zombie: {
                 body: [
-                    [0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0],
-                    [0,0,0,0,1,2,2,2,2,2,2,1,0,0,0,0],
-                    [0,0,0,1,2,2,3,3,3,3,2,2,1,0,0,0],
-                    [0,0,1,2,2,3,3,3,3,3,3,2,2,1,0,0],
-                    [0,1,2,2,3,3,4,4,4,4,3,3,2,2,1,0],
-                    [0,1,2,3,3,4,4,4,4,4,4,3,3,2,1,0],
-                    [0,1,2,3,3,4,4,4,4,4,4,3,3,2,1,0],
-                    [0,1,2,2,3,3,4,4,4,4,3,3,2,2,1,0],
-                    [0,0,1,2,2,3,3,3,3,3,3,2,2,1,0,0],
-                    [0,0,1,2,2,2,2,2,2,2,2,2,2,1,0,0],
-                    [0,0,0,1,2,2,1,1,1,1,2,2,1,0,0,0],
-                    [0,0,1,2,2,2,1,1,1,1,2,2,2,1,0,0],
-                    [0,1,2,2,2,2,1,1,1,1,2,2,2,2,1,0],
-                    [0,1,2,2,2,2,1,1,1,1,2,2,2,2,1,0],
-                    [0,0,1,2,2,1,0,0,0,0,1,2,2,1,0,0],
-                    [0,0,0,1,1,0,0,0,0,0,0,1,1,0,0,0]
+                    [0,0,1,1,1,1,0,0],
+                    [0,1,2,2,2,2,1,0],
+                    [0,1,2,3,3,2,1,0],
+                    [0,1,2,2,2,2,1,0],
+                    [0,0,1,1,1,1,0,0],
+                    [0,1,0,1,1,0,1,0],
+                    [1,0,1,0,0,1,0,1],
+                    [0,1,0,0,0,0,1,0]
                 ],
-                colors: ['#000000', '#2d5a27', '#3d6a37', '#1a3a17', '#4d7a47']
+                colors: ['#000000', '#2d5a27', '#3d6a37']
             },
 
             ghost: {
                 body: [
-                    [0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0],
-                    [0,0,0,0,1,1,2,2,2,2,1,1,0,0,0,0],
-                    [0,0,0,1,2,2,2,3,3,2,2,2,1,0,0,0],
-                    [0,0,1,2,2,3,3,3,3,3,3,2,2,1,0,0],
-                    [0,1,2,2,3,3,4,4,4,4,3,3,2,2,1,0],
-                    [0,1,2,3,3,4,4,4,4,4,4,3,3,2,1,0],
-                    [0,1,2,3,3,4,4,4,4,4,4,3,3,2,1,0],
-                    [0,1,2,2,3,3,4,4,4,4,3,3,2,2,1,0],
-                    [0,0,1,2,2,3,3,3,3,3,3,2,2,1,0,0],
-                    [0,0,1,2,2,2,2,2,2,2,2,2,2,1,0,0],
-                    [0,0,0,1,2,2,2,2,2,2,2,2,1,0,0,0],
-                    [0,0,0,0,1,2,2,2,2,2,2,1,0,0,0,0],
-                    [0,0,0,0,0,1,2,2,2,2,1,0,0,0,0,0],
-                    [0,0,0,0,0,0,1,2,2,1,0,0,0,0,0,0],
-                    [0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0],
-                    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+                    [0,0,1,1,1,1,0,0],
+                    [0,1,2,2,2,2,1,0],
+                    [1,2,3,2,2,3,2,1],
+                    [1,2,2,2,2,2,2,1],
+                    [0,1,2,2,2,2,1,0],
+                    [0,0,1,2,2,1,0,0],
+                    [0,0,0,1,1,0,0,0],
+                    [0,0,0,0,0,0,0,0]
                 ],
-                colors: ['#000000', '#7b68ee', '#9b88ff', '#5b48cc', '#ab98ff']
+                colors: ['#000000', '#7b68ee', '#9b88ff']
             },
 
             mimic: {
                 body: [
-                    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                    [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
-                    [1,2,3,3,3,3,3,3,3,3,3,3,3,3,2,1],
-                    [1,2,3,4,4,4,4,4,4,4,4,4,4,3,2,1],
-                    [1,2,3,4,4,4,4,4,4,4,4,4,4,3,2,1],
-                    [1,2,3,4,4,5,5,5,5,5,5,4,4,3,2,1],
-                    [1,2,3,4,4,5,5,5,5,5,5,4,4,3,2,1],
-                    [1,2,3,4,4,4,4,4,4,4,4,4,4,3,2,1],
-                    [1,2,3,4,4,4,4,4,4,4,4,4,4,3,2,1],
-                    [1,2,3,3,3,3,3,3,3,3,3,3,3,3,2,1],
-                    [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
-                    [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
-                    [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
-                    [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
-                    [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
-                    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+                    [1,1,1,1,1,1,1,1],
+                    [1,2,2,3,3,2,2,1],
+                    [1,2,3,2,2,3,2,1],
+                    [1,2,2,2,2,2,2,1],
+                    [1,2,2,2,2,2,2,1],
+                    [1,2,2,2,2,2,2,1],
+                    [1,2,2,2,2,2,2,1],
+                    [1,1,1,1,1,1,1,1]
                 ],
-                colors: ['#000000', '#8b0000', '#daa520', '#ff0000', '#600000']
+                colors: ['#000000', '#8b0000', '#daa520']
             },
 
-            // NPCs melhorados
             merchant: {
                 body: [
-                    [0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0],
-                    [0,0,0,0,1,2,2,2,2,2,2,1,0,0,0,0],
-                    [0,0,0,1,2,2,3,3,3,3,2,2,1,0,0,0],
-                    [0,0,1,2,2,3,3,3,3,3,3,2,2,1,0,0],
-                    [0,1,2,2,3,3,4,4,4,4,3,3,2,2,1,0],
-                    [0,1,2,3,3,4,4,4,4,4,4,3,3,2,1,0],
-                    [0,1,2,3,3,4,4,4,4,4,4,3,3,2,1,0],
-                    [0,1,2,2,3,3,4,4,4,4,3,3,2,2,1,0],
-                    [0,0,1,2,2,3,3,3,3,3,3,2,2,1,0,0],
-                    [0,0,1,2,2,2,2,2,2,2,2,2,2,1,0,0],
-                    [0,0,0,1,2,2,5,5,5,5,2,2,1,0,0,0],
-                    [0,0,1,2,2,5,5,5,5,5,5,2,2,1,0,0],
-                    [0,1,2,2,5,5,5,5,5,5,5,5,2,2,1,0],
-                    [0,1,2,2,5,5,5,5,5,5,5,5,2,2,1,0],
-                    [0,0,1,2,2,5,5,5,5,5,5,2,2,1,0,0],
-                    [0,0,0,1,1,2,2,2,2,2,2,1,1,0,0,0]
+                    [0,0,1,1,1,1,0,0],
+                    [0,1,2,2,2,2,1,0],
+                    [0,1,2,3,3,2,1,0],
+                    [0,1,2,2,2,2,1,0],
+                    [0,0,1,1,1,1,0,0],
+                    [0,1,4,1,1,4,1,0],
+                    [0,1,1,4,4,1,1,0],
+                    [0,0,1,1,1,1,0,0]
                 ],
-                colors: ['#000000', '#32cd32', '#52ed52', '#12ad12', '#daa520', '#ffd700']
+                colors: ['#000000', '#32cd32', '#52ed52', '#daa520']
             },
 
             stairs: {
                 body: [
-                    [0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0],
-                    [0,0,0,0,0,0,1,2,2,1,0,0,0,0,0,0],
-                    [0,0,0,0,0,1,2,3,3,2,1,0,0,0,0,0],
-                    [0,0,0,0,1,2,3,4,4,3,2,1,0,0,0,0],
-                    [0,0,0,1,2,3,4,4,4,4,3,2,1,0,0,0],
-                    [0,0,1,2,3,4,4,4,4,4,4,3,2,1,0,0],
-                    [0,1,2,3,4,4,4,4,4,4,4,4,3,2,1,0],
-                    [1,2,3,4,4,4,4,4,4,4,4,4,4,3,2,1],
-                    [1,2,3,4,4,4,4,4,4,4,4,4,4,3,2,1],
-                    [0,1,2,3,4,4,4,4,4,4,4,4,3,2,1,0],
-                    [0,0,1,2,3,4,4,4,4,4,4,3,2,1,0,0],
-                    [0,0,0,1,2,3,4,4,4,4,3,2,1,0,0,0],
-                    [0,0,0,0,1,2,3,4,4,3,2,1,0,0,0,0],
-                    [0,0,0,0,0,1,2,3,3,2,1,0,0,0,0,0],
-                    [0,0,0,0,0,0,1,2,2,1,0,0,0,0,0,0],
-                    [0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0]
+                    [0,0,0,1,1,0,0,0],
+                    [0,0,1,2,2,1,0,0],
+                    [0,1,2,3,3,2,1,0],
+                    [1,2,3,4,4,3,2,1],
+                    [1,2,3,4,4,3,2,1],
+                    [0,1,2,3,3,2,1,0],
+                    [0,0,1,2,2,1,0,0],
+                    [0,0,0,1,1,0,0,0]
                 ],
-                colors: ['#000000', '#daa520', '#fad560', '#ba8520', '#9a6520']
+                colors: ['#000000', '#daa520', '#fad560', '#ba8520']
             }
         };
 
-        // Desenhar sprite 16x16
-        function drawSprite(spriteData, x, y, size = 48) {
-            const sprite = spriteData.body || spriteData;
-            const colors = spriteData.colors || spriteData;
-            const pixelSize = size / 16;
+        // Desenhar sprite CORRETAMENTE
+        function drawSprite(spriteName, x, y, size = 32) {
+            const sprite = sprites[spriteName];
+            if (!sprite) return;
             
-            for (let row = 0; row < 16; row++) {
-                for (let col = 0; col < 16; col++) {
-                    const colorIndex = sprite[row][col];
+            const pixelSize = size / 8;
+            const body = sprite.body;
+            const colors = sprite.colors;
+            
+            for (let row = 0; row < 8; row++) {
+                for (let col = 0; col < 8; col++) {
+                    const colorIndex = body[row][col];
                     if (colorIndex > 0) {
                         ctx.fillStyle = colors[colorIndex];
                         ctx.fillRect(
@@ -697,11 +587,42 @@
             }
         }
 
+        // Tipos de armas com ataques diferentes
+        const weaponTypes = [
+            { 
+                name: 'Iron Sword', 
+                damage: [5, 8], 
+                rarity: 'common', 
+                type: 'weapon', 
+                slot: 'weapon',
+                attackType: 'melee'
+            },
+            { 
+                name: 'Steel Bow', 
+                damage: [4, 6], 
+                rarity: 'uncommon', 
+                type: 'weapon', 
+                slot: 'weapon',
+                attackType: 'ranged',
+                projectileSpeed: 8
+            },
+            { 
+                name: 'Magic Staff', 
+                damage: [3, 5], 
+                rarity: 'rare', 
+                type: 'weapon', 
+                slot: 'weapon',
+                attackType: 'magic',
+                projectileSpeed: 6,
+                manaCost: 5
+            }
+        ];
+
         // Input handling
         const keys = {};
         const mouse = { x: 0, y: 0, down: false };
         
-        // Game engine CORRIGIDA
+        // Game engine COMPLETAMENTE CORRIGIDA
         const game = {
             loop: function() {
                 if (gameState !== 'playing') return;
@@ -715,7 +636,7 @@
                 this.updatePlayer();
                 this.updateEnemies();
                 this.updateProjectiles();
-                this.updateNPCs();
+                this.updateCombatTexts();
                 this.checkCollisions();
                 this.updateUI();
                 this.updateDoors();
@@ -753,10 +674,6 @@
                     visitedRooms.add(currentRoom);
                     this.generateRoom();
                     this.positionPlayerFromDoor(direction);
-                    
-                    // CORREÇÃO CRÍTICA: Garantir que o player seja redesenhado
-                    player.x = Math.max(60, Math.min(canvas.width - 60, player.x));
-                    player.y = Math.max(60, Math.min(canvas.height - 60, player.y));
                 }
             },
 
@@ -815,16 +732,6 @@
                     }
                 }
             },
-
-            updateNPCs: function() {
-                // NPC animations
-                npcs.forEach(npc => {
-                    npc.animationTimer = (npc.animationTimer || 0) + 1;
-                    if (npc.animationTimer > 120) {
-                        npc.animationTimer = 0;
-                    }
-                });
-            },
             
             render: function() {
                 // Clear canvas
@@ -835,41 +742,42 @@
                 
                 // Draw NPCs
                 npcs.forEach(npc => {
-                    drawSprite(sprites[npc.type], npc.x, npc.y, 48);
+                    drawSprite(npc.type, npc.x, npc.y, 32);
                 });
                 
                 // Draw items
                 items.forEach(item => {
                     if (item.type === 'chest' || item.type === 'mimic') {
-                        drawSprite(sprites[item.type], item.x, item.y, 40);
+                        drawSprite(item.type, item.x, item.y, 32);
                     } else {
                         ctx.fillStyle = item.color || '#daa520';
-                        ctx.fillRect(item.x - 8, item.y - 8, 16, 16);
+                        ctx.fillRect(item.x - 6, item.y - 6, 12, 12);
                     }
                 });
                 
                 // Draw enemies
                 enemies.forEach(enemy => {
-                    drawSprite(sprites[enemy.type], enemy.x, enemy.y, 48);
+                    drawSprite(enemy.type, enemy.x, enemy.y, 32);
                 });
                 
-                // CORREÇÃO CRÍTICA: Sempre desenhar o player
-                const direction = this.getPlayerDirection();
-                drawSprite(sprites.player[direction], player.x, player.y, 48);
+                // CORREÇÃO: Desenhar player CORRETAMENTE
+                drawSprite('player', player.x, player.y, 32);
                 
                 // Draw projectiles
                 projectiles.forEach(projectile => {
                     ctx.fillStyle = projectile.color;
-                    ctx.fillRect(projectile.x - 4, projectile.y - 4, 8, 8);
+                    ctx.beginPath();
+                    ctx.arc(projectile.x, projectile.y, projectile.size, 0, Math.PI * 2);
+                    ctx.fill();
                 });
-            },
 
-            getPlayerDirection: function() {
-                const angle = player.angle;
-                if (angle >= -Math.PI/4 && angle < Math.PI/4) return 'right';
-                if (angle >= Math.PI/4 && angle < 3*Math.PI/4) return 'down';
-                if (angle >= -3*Math.PI/4 && angle < -Math.PI/4) return 'up';
-                return 'left';
+                // Draw combat texts
+                combatTexts.forEach(text => {
+                    ctx.fillStyle = text.color;
+                    ctx.font = '12px Press Start 2P';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(text.text, text.x, text.y);
+                });
             },
             
             drawRoom: function() {
@@ -882,25 +790,12 @@
                 ctx.lineWidth = 4;
                 ctx.strokeRect(50, 50, canvas.width - 100, canvas.height - 100);
                 
-                // Detailed torches
-                this.drawTorch(80, 80);
-                this.drawTorch(canvas.width - 80, 80);
-                this.drawTorch(80, canvas.height - 80);
-                this.drawTorch(canvas.width - 80, canvas.height - 80);
-            },
-
-            drawTorch: function(x, y) {
-                // Torch base
-                ctx.fillStyle = '#2a2a2a';
-                ctx.fillRect(x-3, y-3, 6, 12);
-                
-                // Torch flame
+                // Simple torches
                 ctx.fillStyle = '#8b0000';
-                ctx.fillRect(x-2, y-8, 4, 6);
-                ctx.fillStyle = '#daa520';
-                ctx.fillRect(x-1, y-10, 2, 4);
-                ctx.fillStyle = '#ffff00';
-                ctx.fillRect(x-1, y-12, 2, 2);
+                ctx.fillRect(70, 70, 4, 4);
+                ctx.fillRect(canvas.width - 74, 70, 4, 4);
+                ctx.fillRect(70, canvas.height - 74, 4, 4);
+                ctx.fillRect(canvas.width - 74, canvas.height - 74, 4, 4);
             },
             
             updatePlayer: function() {
@@ -930,6 +825,7 @@
                 // Attack
                 if (mouse.down && player.attackCooldown <= 0) {
                     this.playerAttack();
+                    player.attackCooldown = player.attackSpeed;
                 }
                 
                 if (player.attackCooldown > 0) {
@@ -941,6 +837,12 @@
                     this.checkInteractions();
                     keys['e'] = false;
                 }
+
+                // Regenerate mana
+                if (player.mana < player.maxMana) {
+                    player.mana += 0.05;
+                    if (player.mana > player.maxMana) player.mana = player.maxMana;
+                }
             },
 
             checkInteractions: function() {
@@ -951,61 +853,127 @@
                         const dy = player.y - npc.y;
                         const distance = Math.sqrt(dx * dx + dy * dy);
                         
-                        if (distance < 50) {
+                        if (distance < 40) {
                             this.nextFloor();
+                            return;
+                        }
+                    }
+                });
+
+                // Check merchant
+                npcs.forEach(npc => {
+                    if (npc.type === 'merchant') {
+                        const dx = player.x - npc.x;
+                        const dy = player.y - npc.y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (distance < 40) {
+                            this.openMerchant();
                             return;
                         }
                     }
                 });
             },
 
+            openMerchant: function() {
+                // Simple merchant interaction
+                this.addCombatText('Merchant: Welcome!', player.x, player.y - 30, '#32cd32');
+                player.gold += 50; // Give some gold for demo
+                this.addCombatText('+50 Gold!', player.x, player.y - 50, '#daa520');
+            },
+
             nextFloor: function() {
                 currentFloor++;
                 if (currentFloor > 5) {
-                    alert('Congratulations! You completed all floors!');
                     this.gameOver();
                     return;
                 }
                 
-                // CORREÇÃO: Garantir que o player seja resetado corretamente
+                // CORREÇÃO: Reset completo ao mudar de andar
                 player.health = player.maxHealth;
                 player.mana = player.maxMana;
                 
                 // Generate new floor
                 this.generateFloor();
                 
-                // CORREÇÃO: Forçar redesenho do player
-                player.x = canvas.width / 2;
-                player.y = canvas.height / 2;
-                
                 this.addCombatText(`Floor ${currentFloor}!`, player.x, player.y, '#00ff00');
             },
             
             playerAttack: function() {
-                const projectile = {
-                    x: player.x,
-                    y: player.y,
-                    vx: Math.cos(player.angle) * 8,
-                    vy: Math.sin(player.angle) * 8,
-                    damage: this.calculatePlayerDamage(),
-                    lifetime: 60,
-                    color: '#daa520'
-                };
+                const weapon = player.equippedWeapon;
+                const attackType = weapon ? weapon.attackType : 'melee';
                 
-                projectiles.push(projectile);
-                player.attackCooldown = player.attackSpeed;
+                switch(attackType) {
+                    case 'melee':
+                        // Melee attack - damage enemies in range
+                        enemies.forEach(enemy => {
+                            const dx = enemy.x - player.x;
+                            const dy = enemy.y - player.y;
+                            const distance = Math.sqrt(dx * dx + dy * dy);
+                            
+                            if (distance < 40) {
+                                const damage = this.calculatePlayerDamage();
+                                enemy.health -= damage;
+                                this.addCombatText('-' + damage, enemy.x, enemy.y, '#ff0000');
+                            }
+                        });
+                        break;
+                        
+                    case 'ranged':
+                        // Ranged projectile
+                        if (player.mana >= 3) {
+                            player.mana -= 3;
+                            const projectile = {
+                                x: player.x,
+                                y: player.y,
+                                vx: Math.cos(player.angle) * 8,
+                                vy: Math.sin(player.angle) * 8,
+                                damage: this.calculatePlayerDamage(),
+                                lifetime: 60,
+                                size: 4,
+                                color: '#c0c0c0'
+                            };
+                            projectiles.push(projectile);
+                        }
+                        break;
+                        
+                    case 'magic':
+                        // Magic projectile
+                        if (player.mana >= (weapon.manaCost || 5)) {
+                            player.mana -= weapon.manaCost;
+                            const projectile = {
+                                x: player.x,
+                                y: player.y,
+                                vx: Math.cos(player.angle) * 6,
+                                vy: Math.sin(player.angle) * 6,
+                                damage: this.calculatePlayerDamage(),
+                                lifetime: 90,
+                                size: 6,
+                                color: '#9370db'
+                            };
+                            projectiles.push(projectile);
+                        }
+                        break;
+                }
             },
             
             updateEnemies: function() {
                 enemies.forEach((enemy, index) => {
                     if (enemy.health <= 0) {
+                        // Drop loot and gold
+                        player.gold += enemy.goldReward;
+                        player.exp += enemy.expReward;
+                        
                         if (Math.random() < 0.3) {
                             this.spawnLoot(enemy.x, enemy.y);
                         }
+                        
+                        this.addCombatText('+' + enemy.goldReward + ' Gold', enemy.x, enemy.y, '#daa520');
                         enemies.splice(index, 1);
                         return;
                     }
                     
+                    // Simple AI - move toward player
                     const dx = player.x - enemy.x;
                     const dy = player.y - enemy.y;
                     const distance = Math.sqrt(dx * dx + dy * dy);
@@ -1013,6 +981,17 @@
                     if (distance < 200) {
                         enemy.x += (dx / distance) * enemy.speed;
                         enemy.y += (dy / distance) * enemy.speed;
+                    }
+
+                    // Enemy attack
+                    if (distance < 30 && enemy.attackCooldown <= 0) {
+                        player.health -= enemy.damage;
+                        this.addCombatText('-' + enemy.damage, player.x, player.y, '#ff0000');
+                        enemy.attackCooldown = enemy.attackSpeed;
+                    }
+
+                    if (enemy.attackCooldown > 0) {
+                        enemy.attackCooldown--;
                     }
                 });
             },
@@ -1028,6 +1007,18 @@
                         projectile.x < 50 || projectile.x > canvas.width - 50 ||
                         projectile.y < 50 || projectile.y > canvas.height - 50) {
                         projectiles.splice(i, 1);
+                    }
+                }
+            },
+
+            updateCombatTexts: function() {
+                for (let i = combatTexts.length - 1; i >= 0; i--) {
+                    const text = combatTexts[i];
+                    text.y -= 1;
+                    text.life--;
+                    
+                    if (text.life <= 0) {
+                        combatTexts.splice(i, 1);
                     }
                 }
             },
@@ -1050,8 +1041,9 @@
                         const dy = projectiles[i].y - enemies[j].y;
                         const distance = Math.sqrt(dx * dx + dy * dy);
                         
-                        if (distance < 24) {
+                        if (distance < 20) {
                             enemies[j].health -= projectiles[i].damage;
+                            this.addCombatText('-' + projectiles[i].damage, enemies[j].x, enemies[j].y, '#ff0000');
                             projectiles.splice(i, 1);
                             break;
                         }
@@ -1064,25 +1056,16 @@
                     const dy = player.y - items[i].y;
                     const distance = Math.sqrt(dx * dx + dy * dy);
                     
-                    if (distance < 30) {
+                    if (distance < 25) {
                         this.collectItem(items[i]);
                         items.splice(i, 1);
                     }
                 }
 
-                // Enemy vs Player
-                enemies.forEach(enemy => {
-                    const dx = player.x - enemy.x;
-                    const dy = player.y - enemy.y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-                    
-                    if (distance < 30) {
-                        player.health -= enemy.damage;
-                        if (player.health <= 0) {
-                            this.gameOver();
-                        }
-                    }
-                });
+                // Check player death
+                if (player.health <= 0) {
+                    this.gameOver();
+                }
             },
             
             collectItem: function(item) {
@@ -1101,46 +1084,45 @@
             },
             
             spawnLoot: function(x, y) {
-                const lootTypes = ['weapon', 'armor', 'helmet', 'boots', 'ring', 'amulet'];
+                const lootTypes = ['weapon', 'armor', 'potion'];
                 const lootType = lootTypes[Math.floor(Math.random() * lootTypes.length)];
                 this.spawnRandomItem(x, y, lootType);
             },
             
             spawnRandomItem: function(x, y, type = null) {
                 if (!type) {
-                    const types = ['weapon', 'armor', 'helmet', 'boots', 'ring', 'amulet', 'chest', 'mimic'];
+                    const types = ['weapon', 'armor', 'potion', 'chest', 'mimic'];
                     type = types[Math.floor(Math.random() * types.length)];
                 }
                 
                 let item;
-                const rarityRoll = Math.random();
-                let rarityIndex = 0;
-                if (rarityRoll < 0.6) rarityIndex = 0;
-                else if (rarityRoll < 0.85) rarityIndex = 1;
-                else if (rarityRoll < 0.95) rarityIndex = 2;
-                else if (rarityRoll < 0.99) rarityIndex = 3;
-                else rarityIndex = 4;
-
+                
                 if (type === 'weapon') {
                     const weapons = [
-                        { name: 'Iron Sword', damage: [5, 8], rarity: 'common' },
-                        { name: 'Steel Sword', damage: [8, 12], rarity: 'uncommon' },
-                        { name: 'Silver Sword', damage: [12, 18], rarity: 'rare' },
-                        { name: 'Dragon Sword', damage: [18, 25], rarity: 'epic' },
-                        { name: 'Legend Sword', damage: [25, 35], rarity: 'legendary' }
+                        { name: 'Iron Sword', damage: [5, 8], rarity: 'common', attackType: 'melee' },
+                        { name: 'Steel Bow', damage: [4, 6], rarity: 'uncommon', attackType: 'ranged' },
+                        { name: 'Magic Staff', damage: [3, 5], rarity: 'rare', attackType: 'magic', manaCost: 5 }
                     ];
-                    item = {...weapons[rarityIndex]};
+                    item = {...weapons[Math.floor(Math.random() * weapons.length)]};
+                    item.type = 'weapon';
+                } else if (type === 'potion') {
+                    item = {
+                        type: 'potion',
+                        name: 'Health Potion',
+                        health: 30,
+                        color: '#ff0000'
+                    };
                 } else {
                     item = {
                         type: type,
-                        name: type.charAt(0).toUpperCase() + type.slice(1) + ' ' + ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary'][rarityIndex],
-                        rarity: ['common', 'uncommon', 'rare', 'epic', 'legendary'][rarityIndex]
+                        name: type.charAt(0).toUpperCase() + type.slice(1),
+                        color: '#daa520'
                     };
                 }
                 
                 item.x = x;
                 item.y = y;
-                item.color = this.getRarityColor(item.rarity);
+                item.rarity = item.rarity || 'common';
                 items.push(item);
             },
 
@@ -1156,17 +1138,29 @@
             },
             
             createEnemy: function(type, x, y) {
-                const enemy = {
+                const baseStats = {
+                    skeleton: { health: 30, damage: 5, speed: 1.5, goldReward: 10, expReward: 15 },
+                    zombie: { health: 40, damage: 7, speed: 1, goldReward: 15, expReward: 20 },
+                    ghost: { health: 25, damage: 6, speed: 2, goldReward: 12, expReward: 18 },
+                    mimic: { health: 50, damage: 10, speed: 1.2, goldReward: 25, expReward: 30 }
+                };
+                
+                const stats = baseStats[type];
+                const floorMultiplier = 1 + (currentFloor - 1) * 0.5;
+                
+                return {
                     type: type,
                     x: x || Math.random() * (canvas.width - 100) + 50,
                     y: y || Math.random() * (canvas.height - 100) + 50,
-                    health: 30 + (currentFloor * 10),
-                    maxHealth: 30 + (currentFloor * 10),
-                    damage: 5 + currentFloor,
-                    speed: 1 + (currentFloor * 0.2),
-                    size: 20
+                    health: Math.floor(stats.health * floorMultiplier),
+                    maxHealth: Math.floor(stats.health * floorMultiplier),
+                    damage: Math.floor(stats.damage * floorMultiplier),
+                    speed: stats.speed,
+                    goldReward: Math.floor(stats.goldReward * floorMultiplier),
+                    expReward: Math.floor(stats.expReward * floorMultiplier),
+                    attackCooldown: 0,
+                    attackSpeed: 60
                 };
-                return enemy;
             },
 
             generateFloor: function() {
@@ -1230,13 +1224,15 @@
                 enemies = [];
                 items = [];
                 npcs = [];
+                projectiles = [];
+                combatTexts = [];
                 
                 const room = rooms[currentRoom];
                 
                 // Add content based on room type
                 switch(room.type) {
                     case 'start':
-                        // Safe starting room
+                        // Safe starting room - maybe a healing fountain?
                         break;
                     case 'stairs':
                         npcs.push({
@@ -1251,16 +1247,6 @@
                             x: canvas.width / 2,
                             y: canvas.height / 2
                         });
-                        // Merchant has items for sale
-                        for (let i = 0; i < 4; i++) {
-                            items.push({
-                                type: 'weapon',
-                                name: 'Merchant Item ' + (i+1),
-                                x: canvas.width/2 - 100 + (i * 50),
-                                y: canvas.height/2 + 60,
-                                color: '#32cd32'
-                            });
-                        }
                         break;
                     default:
                         // Normal room with enemies and loot
@@ -1302,6 +1288,12 @@
             addToInventory: function(item) {
                 if (player.inventory.length < 16) {
                     player.inventory.push(item);
+                    
+                    if (item.type === 'potion') {
+                        player.health = Math.min(player.maxHealth, player.health + item.health);
+                        this.addCombatText('+' + item.health + ' HP', player.x, player.y, '#00ff00');
+                    }
+                    
                     this.updateInventoryUI();
                 }
             },
@@ -1348,6 +1340,7 @@
                     this.updatePlayerStats();
                     this.updateInventoryUI();
                     this.updateEquipmentUI();
+                    this.addCombatText('Equipped: ' + item.name, player.x, player.y, '#daa520');
                 }
             },
             
@@ -1385,15 +1378,15 @@
                     <div>Reached Level: ${player.level}</div>
                     <div>Floor: ${currentFloor}</div>
                     <div>Gold: ${player.gold}</div>
+                    <div>Total Kills: ${player.totalKills || 0}</div>
                 `;
             },
             
             initGame: function() {
-                // CORREÇÃO: Inicialização completa do player
+                // CORREÇÃO: Inicialização completa e correta
                 player = {
                     x: canvas.width / 2,
                     y: canvas.height / 2,
-                    size: 20,
                     speed: 4,
                     health: 100,
                     maxHealth: 100,
@@ -1403,11 +1396,14 @@
                     damageMax: 12,
                     defense: 5,
                     level: 1,
-                    gold: 0,
+                    gold: 50,
+                    exp: 0,
+                    expToNextLevel: 100,
                     attackCooldown: 0,
                     attackSpeed: 20,
                     inventory: [],
-                    equippedWeapon: null
+                    equippedWeapon: null,
+                    totalKills: 0
                 };
                 
                 currentFloor = 1;
